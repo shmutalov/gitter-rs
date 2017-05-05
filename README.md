@@ -1,4 +1,6 @@
 # gitter-rs
+
+[![Join the chat at https://gitter.im/gitter-rs/Lobby](https://badges.gitter.im/gitter-rs/Lobby.svg)](https://gitter.im/gitter-rs/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 Gitter API in Rust 
 
  **`WIP`**
