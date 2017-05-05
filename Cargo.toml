@@ -4,9 +4,9 @@ version = "0.1.0"
 authors = ["shmutalov <shmutalov@gmail.com>"]
 
 description = "A library that provides Gitter API"
-
-keywords = ["gitter", "api", "chat"]
+readme = "README.md"
 license = "MIT"
+keywords = ["gitter", "api", "chat"]
 
 [dependencies]
 chrono = { version = "=0.3.0", features = ["serde"] }
