@@ -1,7 +1,9 @@
 use chrono::{DateTime, UTC};
 
-// A Room in Gitter can represent a GitHub Organization, a GitHub Repository, a Gitter Channel or a One-to-one conversation.
-// In the case of the Organizations and Repositories, the access control policies are inherited from GitHub.
+// A Room in Gitter can represent a GitHub Organization, a GitHub Repository,
+// a Gitter Channel or a One-to-one conversation.
+// In the case of the Organizations and Repositories,
+// the access control policies are inherited from GitHub.
 #[derive(Deserialize, Debug)]
 pub struct Room {
     // Room ID
@@ -22,7 +24,7 @@ pub struct Room {
 
     // Count of users in the room
     pub user_count: i32,
-    
+
     // Number of unread messages for the current user
     #[serde(rename = "unreadItems")]
     pub unread_items: i32,
@@ -41,12 +43,12 @@ pub struct Room {
     pub url: String,
 
     // Type of the room
-	// - ORG: A room that represents a GitHub Organization.
-	// - REPO: A room that represents a GitHub Repository.
-	// - ONETOONE: A one-to-one chat.
-	// - ORG_CHANNEL: A Gitter channel nested under a GitHub Organization.
-	// - REPO_CHANNEL A Gitter channel nested under a GitHub Repository.
-	// - USER_CHANNEL A Gitter channel nested under a GitHub User.
+    // - ORG: A room that represents a GitHub Organization.
+    // - REPO: A room that represents a GitHub Repository.
+    // - ONETOONE: A one-to-one chat.
+    // - ORG_CHANNEL: A Gitter channel nested under a GitHub Organization.
+    // - REPO_CHANNEL A Gitter channel nested under a GitHub Repository.
+    // - USER_CHANNEL A Gitter channel nested under a GitHub User.
     #[serde(rename = "githubType")]
     pub github_type: String,
 
@@ -60,6 +62,13 @@ pub struct Room {
     // Room version
     #[serde(rename = "v")]
     pub version: i32,
+}
+
+// Join room request model
+#[derive(Serialize, Debug)]
+pub struct JoinRoom {
+    // Room ID to join
+    pub id: String,
 }
 
 #[derive(Deserialize, Debug)]
@@ -130,13 +139,20 @@ pub struct Message {
     pub version: i32,
 }
 
+// Send message request model
+#[derive(Serialize, Debug)]
+pub struct OutMessage {
+    // Original message in plain-text/markdown
+    pub text: String
+}
+
 // Mention holds data about mentioned user in the message
 #[derive(Deserialize, Debug)]
 pub struct Mention {
     // User's username
     #[serde(rename = "screenName")]
     pub screen_name: String,
-    
+
     // Gitter User ID
     #[serde(rename = "userID")]
     pub user_id: String,
@@ -154,4 +170,11 @@ pub struct Issue {
 pub struct Url {
     // URL
     pub url: String,
+}
+
+// Search rooms result
+#[derive(Deserialize, Debug)]
+pub struct SearchResult {
+    #[serde(rename = "results")]
+    pub rooms: Vec<Room>
 }

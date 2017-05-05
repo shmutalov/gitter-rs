@@ -1,6 +1,8 @@
 use std::borrow::Cow;
-use hyper::client::Client; 
-use hyper_tls::HttpsConnector;
+use std::collections::HashMap;
+use reqwest::{Client, IntoUrl};
+use serde::{Deserialize, Serialize};
+use serde_urlencoded;
 
 use models::*;
 
@@ -8,108 +10,186 @@ use models::*;
 struct Gitter<'a> {
     token: Cow<'a, str>,
     api_base_url: Cow<'a, str>,
-    client: Client<HttpsConnector>,
+    client: Client,
 }
 
 const API_BASE_URL: &str = "https://api.gitter.im/v1/";
 
+#[derive(Debug)]
+pub enum ApiError {
+    EmptyResponse,
+    BadResponse,
+    RoomNotFound,
+    Unknown,
+}
+
+type ApiResult<T> = Result<T, ApiError>;
+
 impl<'a> Gitter<'a> {
     // New initializes the Gitter API client
-    pub fn new<S>(token: S, client: Client<HttpsConnector>) -> Gitter<'a> 
+    pub fn new<S>(token: S) -> Gitter<'a>
         where S: Into<Cow<'a, str>>
     {
-        let gitter = Gitter{
+        let gitter = Gitter {
             token: token.into(),
             api_base_url: API_BASE_URL.into(),
-            client: client,
-            };
+            client: Client::new().unwrap(),
+        };
 
         gitter
     }
 
     // Returns the current user
-    pub fn get_user(&self) -> Result<User, ()> {
-        unimplemented!()
+    pub fn get_user(&self) -> ApiResult<User> {
+        let full_url = self.api_base_url.to_string() + "user";
+        self.get(&full_url)
     }
 
-    
+
     // Returns a list of Rooms the user is part of
-    pub fn get_user_rooms<S>(&self, user_id: S) -> Result<Vec<Room>, ()>
-        where S: Into<String> 
+    pub fn get_user_rooms<S>(&self, user_id: S) -> ApiResult<Vec<Room>>
+        where S: Into<String>
     {
-        unimplemented!()
+        let full_url = self.api_base_url.to_string() + "user/" + &user_id.into() + "/rooms";
+        self.get(&full_url)
     }
 
     // Returns a list of rooms the current user is in
-    pub fn get_rooms(&self) -> Result<Vec<Room>, ()> {
-        unimplemented!()
+    pub fn get_rooms(&self) -> ApiResult<Vec<Room>> {
+        let full_url = self.api_base_url.to_string() + "rooms";
+        self.get(&full_url)
     }
 
     // Returns the users in the room with the passed id
-    pub fn get_users_in_room<S>(&self, room_id: S) -> Result<Vec<User>, ()> 
+    pub fn get_users_in_room<S>(&self, room_id: S) -> ApiResult<Vec<User>>
         where S: Into<String>
     {
-        unimplemented!()
+        let full_url = self.api_base_url.to_string() + "rooms/" + &room_id.into() + "/users";
+        self.get(&full_url)
     }
 
     // Returns a room with the passed id
-    pub fn get_room<S>(&self, room_id: S) -> Result<Room, ()> 
+    pub fn get_room<S>(&self, room_id: S) -> ApiResult<Room>
         where S: Into<String>
     {
-        unimplemented!()
+        let full_url = self.api_base_url.to_string() + "rooms/" + &room_id.into();
+        self.get(&full_url)
     }
 
     // Returns a list of messages in a room.
     // Pagination is optional. You can pass nil or specific pagination params.
-    pub fn get_messages<S>(&self, room_id: S, params: Option<Pagination>) -> Result<Vec<Message>, ()>
+    pub fn get_messages<S>(&self, room_id: S, params: Option<Pagination>) -> ApiResult<Vec<Message>>
         where S: Into<String>
     {
-        unimplemented!()
+        let mut full_url = self.api_base_url.to_string() + "rooms/" + &room_id.into() +
+                           "/chatMessages";
+
+        if let Some(p) = params {
+            full_url = "?".to_string() + &p.encode();
+        }
+
+        self.get(&full_url)
     }
 
     // Returns a message in a room.
-    pub fn get_message<S>(&self, room_id: S, message_id: S) -> Result<Message, ()> 
+    pub fn get_message<S>(&self, room_id: S, message_id: S) -> ApiResult<Message>
         where S: Into<String>
     {
-        unimplemented!()
+        let mut full_url = self.api_base_url.to_string() + "rooms/" + &room_id.into() +
+                           "/chatMessages/" + &message_id.into();
+
+        self.get(&full_url)
     }
 
     // Sends a message to a room
-    pub fn send_message<S>(&self, room_id: S, text: S) -> Result<(), ()>
+    pub fn send_message<S>(&self, room_id: S, text: S) -> ApiResult<()>
         where S: Into<String>
     {
-        unimplemented!()
+        let mut full_url = self.api_base_url.to_string() + "rooms/" + &room_id.into() +"/chatMessages";
+        let msg = OutMessage{text: text.into()};
+        
+        self.post(&full_url, &msg)
     }
 
     // Joins a room
-    pub fn join_room<S>(&self, room_id: S, user_id: S) -> Result<Room, ()> 
+    pub fn join_room<S>(&self, room_id: S, user_id: S) -> ApiResult<Room>
         where S: Into<String>
     {
-        unimplemented!()
+        let mut full_url = self.api_base_url.to_string() + "user/" + &user_id.into() +"/rooms";
+        let room = JoinRoom{id: room_id.into()};
+        
+        self.post(&full_url, &room)
     }
 
     // Removes a user from the room
-    pub fn leave_room<S>(&self, room_id: S, user_id: S) -> Result<(), ()>
+    pub fn leave_room<S>(&self, room_id: S, user_id: S) -> ApiResult<()>
         where S: Into<String>
     {
-        unimplemented!()
+        let mut full_url = self.api_base_url.to_string() + "rooms/" + &room_id.into() +
+                           "/users/" + &user_id.into();
+
+        self.delete(&full_url)
     }
 
     // Queries the Rooms resources of gitter API
-    pub fn search_rooms<S>(&self, room: S) -> Result<Vec<Room>, ()> 
+    pub fn search_rooms<S>(&self, room: S) -> ApiResult<SearchResult>
         where S: Into<String>
     {
-        unimplemented!()
+        let query = &[("q", &room.into())];
+        let mut full_url = self.api_base_url.to_string() + "rooms?" + &serde_urlencoded::to_string(query).unwrap();
+
+        self.get(&full_url)
     }
 
     // Returns the room ID of a given URI
-    pub fn get_room_id<S>(&self, uri: S) -> Result<String, ()>
+    pub fn get_room_id<S>(&self, uri: S) -> ApiResult<String>
         where S: Into<String>
     {
-        unimplemented!()
+        let url = uri.into();
+        let url2 = url.clone();
+
+        if let Ok(s) = self.search_rooms(url) {
+            if let Some(room) = s.rooms.iter().find(|room| room.uri == url2) {
+                return Ok(room.id.to_string());
+            }
+        }
+        
+        Err(ApiError::RoomNotFound)
     }
 
+    // Returns raw data in bytes from specified url
+    fn get<S, T>(&self, url: S) -> ApiResult<T>
+        where S: IntoUrl,
+              T: Deserialize
+    {
+        match self.client.get(url).send() {
+            Ok(mut response) => response.json::<T>().map_err(|_| ApiError::BadResponse),
+            Err(_) => Err(ApiError::BadResponse),
+        }
+    }
 
+    // Sends raw body data to specified url and returns response raw data
+    fn post<S, B, T>(&self, url: S, body: B) -> ApiResult<T>
+        where S: IntoUrl,
+              B: Serialize,
+              T: Deserialize
+    {
+        match self.client.post(url).json(&body).send() {
+            Ok(mut response) => response.json::<T>().map_err(|_| ApiError::BadResponse),
+            Err(_) => Err(ApiError::BadResponse),
+        }
+    }
+
+    // Deletes resource by specified url
+    fn delete<S, T>(&self, url: S) -> ApiResult<T>
+        where S: IntoUrl,
+              T: Deserialize
+    {
+        match self.client.delete(url).send() {
+            Ok(mut response) => response.json::<T>().map_err(|_| ApiError::BadResponse),
+            Err(_) => Err(ApiError::BadResponse),
+        }
+    }
 }
 
 // Pagination params
@@ -118,14 +198,39 @@ pub struct Pagination<'a> {
     skip: i32,
 
     // Get messages before beforeId
-    before_id: Cow<'a, str>,
+    before_id: Option<Cow<'a, str>>,
 
     // Get messages after afterId
-    after_id: Cow<'a, str>,
+    after_id: Option<Cow<'a, str>>,
 
     // Maximum number of messages to return
     limit: i32,
 
     // Search query
-    query: Cow<'a, str>,
+    #[allow(dead_code)]
+    query: Option<Cow<'a, str>>,
+}
+
+impl<'a> Pagination<'a> {
+    pub fn encode(self) -> String {
+        let mut values = HashMap::new();
+
+        if let Some(after_id) = self.after_id {
+            values.insert("afterId", after_id.to_string());
+        }
+
+        if let Some(before_id) = self.before_id {
+            values.insert("beforeId", before_id.to_string());
+        }
+
+        if self.skip > 0 {
+            values.insert("skip", self.skip.to_string());
+        }
+
+        if self.limit > 0 {
+            values.insert("limit", self.limit.to_string());
+        }
+
+        serde_urlencoded::to_string(&values).unwrap()
+    }
 }

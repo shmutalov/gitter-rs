@@ -9,16 +9,9 @@ keywords = ["gitter", "api", "chat"]
 license = "MIT"
 
 [dependencies]
-chrono = { version = "0.3", features = ["serde"] }
-serde = "1.0"
-serde_derive = "1.0"
-serde_json = "1.0"
-futures = "0.1"
-tokio-core = "0.1"
-error-chain = "0.10.0"
-
-[dependencies.hyper]
-git = "https://github.com/hyperium/hyper.git"
-
-[dependencies.hyper-tls]
-git = "https://github.com/hyperium/hyper-tls.git"
+chrono = { version = "=0.3.0", features = ["serde"] }
+serde = "0.9"
+serde_json = "0.9"
+serde_derive = "0.9"
+serde_urlencoded = "0.4"
+reqwest = "0.5.1"
