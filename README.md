@@ -1,5 +1,8 @@
 # gitter-rs
-Gitter API in Rust
+Gitter API in Rust 
+
+ **`WIP`**
+
 https://developer.gitter.im
 
 #### Install
