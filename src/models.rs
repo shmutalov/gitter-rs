@@ -15,7 +15,7 @@ pub struct Room {
     // Room topic. (default: GitHub repo description)
     pub topic: String,
 
-    // Room URI on Gitte
+    // Room URI on Gitter
     pub uri: Option<String>,
 
     // Indicates if the room is a one-to-one chat
@@ -54,7 +54,7 @@ pub struct Room {
     pub github_type: String,
 
     // Tags that define the room
-    pub tags: Vec<String>,
+    pub tags: Option<Vec<String>>,
 
     // Determines, whether current user is room member or not
     #[serde(rename = "roomMember")]
@@ -113,7 +113,7 @@ pub struct Message {
 
     // ISO formatted date of the message if edited
     #[serde(rename = "editedAt")]
-    pub edited_at: DateTime<UTC>,
+    pub edited_at: Option<DateTime<UTC>>,
 
     // User that sent the message
     #[serde(rename = "fromUser")]

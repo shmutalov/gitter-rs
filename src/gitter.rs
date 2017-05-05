@@ -21,6 +21,7 @@ const API_BASE_URL: &str = "https://api.gitter.im/v1/";
 pub enum ApiError {
     EmptyResponse,
     BadResponse,
+    BadRequest(String),
     RoomNotFound,
     UserNotFound,
     Unknown(String),
@@ -99,7 +100,8 @@ impl<'a> Gitter<'a> {
                            "/chatMessages";
 
         if let Some(p) = params {
-            full_url = "?".to_string() + &p.encode();
+            full_url.push_str("?");
+            full_url.push_str(&p.encode());
         }
 
         self.get(&full_url)
@@ -163,13 +165,18 @@ impl<'a> Gitter<'a> {
         let url = uri.into();
         let url2 = url.clone();
 
-        if let Ok(s) = self.search_rooms(url) {
-            if let Some(room) = s.rooms.iter().find(|r| r.uri.as_ref().map_or(false, |x| x == &url2)) {
-                return Ok(room.id.to_string());
-            }
-        }
+        match self.search_rooms(url) {
+            Ok(s) => {
+                if let Some(room) = s.rooms
+                                     .into_iter()
+                                     .find(|r| r.uri.as_ref().map_or(false, |x| x == &url2)) {
+                    return Ok(room.id.to_string());
+                }
 
-        Err(ApiError::RoomNotFound)
+                return Err(ApiError::RoomNotFound);
+            }
+            Err(e) => Err(e),
+        }
     }
 
     // create default headers
@@ -190,7 +197,7 @@ impl<'a> Gitter<'a> {
     {
         match self.client.get(url).headers(self.default_headers()).send() {
             Ok(mut response) => response.json::<T>().map_err(|e| ApiError::Unknown(e.to_string())),
-            Err(_) => Err(ApiError::BadResponse),
+            Err(e) => Err(ApiError::BadRequest(e.to_string())),
         }
     }
 
@@ -202,7 +209,7 @@ impl<'a> Gitter<'a> {
     {
         match self.client.post(url).json(&body).send() {
             Ok(mut response) => response.json::<T>().map_err(|e| ApiError::Unknown(e.to_string())),
-            Err(_) => Err(ApiError::BadResponse),
+            Err(e) => Err(ApiError::BadRequest(e.to_string())),
         }
     }
 
@@ -213,7 +220,7 @@ impl<'a> Gitter<'a> {
     {
         match self.client.delete(url).send() {
             Ok(mut response) => response.json::<T>().map_err(|e| ApiError::Unknown(e.to_string())),
-            Err(_) => Err(ApiError::BadResponse),
+            Err(e) => Err(ApiError::BadRequest(e.to_string())),
         }
     }
 }
@@ -221,20 +228,20 @@ impl<'a> Gitter<'a> {
 // Pagination params
 pub struct Pagination<'a> {
     // Skip n messages
-    skip: i32,
+    pub skip: i32,
 
     // Get messages before beforeId
-    before_id: Option<Cow<'a, str>>,
+    pub before_id: Option<Cow<'a, str>>,
 
     // Get messages after afterId
-    after_id: Option<Cow<'a, str>>,
+    pub after_id: Option<Cow<'a, str>>,
 
     // Maximum number of messages to return
-    limit: i32,
+    pub limit: i32,
 
     // Search query
     #[allow(dead_code)]
-    query: Option<Cow<'a, str>>,
+    pub query: Option<Cow<'a, str>>,
 }
 
 impl<'a> Pagination<'a> {
