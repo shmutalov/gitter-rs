@@ -9,3 +9,5 @@ extern crate reqwest;
 
 pub mod models;
 pub mod gitter;
+
+pub use gitter::Gitter;
