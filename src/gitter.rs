@@ -22,7 +22,8 @@ pub enum ApiError {
     EmptyResponse,
     BadResponse,
     RoomNotFound,
-    Unknown,
+    UserNotFound,
+    Unknown(String),
 }
 
 type ApiResult<T> = Result<T, ApiError>;
@@ -47,9 +48,17 @@ impl<'a> Gitter<'a> {
     // Returns the current user
     pub fn get_user(&self) -> ApiResult<User> {
         let full_url = self.api_base_url.to_string() + "user";
-        self.get(&full_url)
+        match self.get::<&str, Vec<User>>(&full_url) {
+            Ok(users) => {
+                if users.len() > 0 {
+                    return Ok(users[0].clone());
+                } else {
+                    return Err(ApiError::RoomNotFound);
+                }
+            }
+            Err(e) => Err(e),
+        }
     }
-
 
     // Returns a list of Rooms the user is part of
     pub fn get_user_rooms<S>(&self, user_id: S) -> ApiResult<Vec<Room>>
@@ -101,7 +110,7 @@ impl<'a> Gitter<'a> {
         where S: Into<String>
     {
         let full_url = self.api_base_url.to_string() + "rooms/" + &room_id.into() +
-                           "/chatMessages/" + &message_id.into();
+                       "/chatMessages/" + &message_id.into();
 
         self.get(&full_url)
     }
@@ -110,8 +119,7 @@ impl<'a> Gitter<'a> {
     pub fn send_message<S>(&self, room_id: S, text: S) -> ApiResult<()>
         where S: Into<String>
     {
-        let full_url = self.api_base_url.to_string() + "rooms/" + &room_id.into() +
-                           "/chatMessages";
+        let full_url = self.api_base_url.to_string() + "rooms/" + &room_id.into() + "/chatMessages";
         let msg = OutMessage { text: text.into() };
 
         self.post(&full_url, &msg)
@@ -132,7 +140,7 @@ impl<'a> Gitter<'a> {
         where S: Into<String>
     {
         let full_url = self.api_base_url.to_string() + "rooms/" + &room_id.into() + "/users/" +
-                           &user_id.into();
+                       &user_id.into();
 
         self.delete(&full_url)
     }
@@ -143,7 +151,7 @@ impl<'a> Gitter<'a> {
     {
         let query = &[("q", &room.into())];
         let full_url = self.api_base_url.to_string() + "rooms?" +
-                           &serde_urlencoded::to_string(query).unwrap();
+                       &serde_urlencoded::to_string(query).unwrap();
 
         self.get(&full_url)
     }
@@ -156,7 +164,7 @@ impl<'a> Gitter<'a> {
         let url2 = url.clone();
 
         if let Ok(s) = self.search_rooms(url) {
-            if let Some(room) = s.rooms.iter().find(|room| room.uri == url2) {
+            if let Some(room) = s.rooms.iter().find(|r| r.uri.as_ref().map_or(false, |x| x == &url2)) {
                 return Ok(room.id.to_string());
             }
         }
@@ -170,7 +178,7 @@ impl<'a> Gitter<'a> {
 
         headers.set(ContentType::json());
         headers.set(Accept::json());
-        headers.set(Authorization(Bearer{token: self.token.to_string()}));
+        headers.set(Authorization(Bearer { token: self.token.to_string() }));
 
         headers
     }
@@ -181,7 +189,7 @@ impl<'a> Gitter<'a> {
               T: Deserialize
     {
         match self.client.get(url).headers(self.default_headers()).send() {
-            Ok(mut response) => response.json::<T>().map_err(|_| ApiError::BadResponse),
+            Ok(mut response) => response.json::<T>().map_err(|e| ApiError::Unknown(e.to_string())),
             Err(_) => Err(ApiError::BadResponse),
         }
     }
@@ -193,7 +201,7 @@ impl<'a> Gitter<'a> {
               T: Deserialize
     {
         match self.client.post(url).json(&body).send() {
-            Ok(mut response) => response.json::<T>().map_err(|_| ApiError::BadResponse),
+            Ok(mut response) => response.json::<T>().map_err(|e| ApiError::Unknown(e.to_string())),
             Err(_) => Err(ApiError::BadResponse),
         }
     }
@@ -204,7 +212,7 @@ impl<'a> Gitter<'a> {
               T: Deserialize
     {
         match self.client.delete(url).send() {
-            Ok(mut response) => response.json::<T>().map_err(|_| ApiError::BadResponse),
+            Ok(mut response) => response.json::<T>().map_err(|e| ApiError::Unknown(e.to_string())),
             Err(_) => Err(ApiError::BadResponse),
         }
     }

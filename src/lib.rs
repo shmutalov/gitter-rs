@@ -11,3 +11,4 @@ pub mod models;
 pub mod gitter;
 
 pub use gitter::Gitter;
+pub use models::*;

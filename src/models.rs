@@ -16,13 +16,14 @@ pub struct Room {
     pub topic: String,
 
     // Room URI on Gitte
-    pub uri: String,
+    pub uri: Option<String>,
 
     // Indicates if the room is a one-to-one chat
     #[serde(rename = "oneToOne")]
     pub one_to_one: bool,
 
     // Count of users in the room
+    #[serde(rename = "userCount")]
     pub user_count: i32,
 
     // Number of unread messages for the current user
@@ -34,7 +35,7 @@ pub struct Room {
 
     // Last time the current user accessed the room in ISO format
     #[serde(rename = "lastAccessTime")]
-    pub last_access_time: DateTime<UTC>,
+    pub last_access_time: Option<DateTime<UTC>>,
 
     // Indicates if the current user has disabled notifications
     pub lurk: bool,
@@ -61,7 +62,7 @@ pub struct Room {
 
     // Room version
     #[serde(rename = "v")]
-    pub version: i32,
+    pub version: Option<i32>,
 }
 
 // Join room request model
@@ -71,7 +72,7 @@ pub struct JoinRoom {
     pub id: String,
 }
 
-#[derive(Deserialize, Debug)]
+#[derive(Deserialize, Debug, Clone)]
 pub struct User {
     // Gitter User ID
     pub id: String,
