@@ -143,7 +143,7 @@ pub struct Message {
 #[derive(Serialize, Debug)]
 pub struct OutMessage {
     // Original message in plain-text/markdown
-    pub text: String
+    pub text: String,
 }
 
 // Mention holds data about mentioned user in the message
@@ -176,5 +176,5 @@ pub struct Url {
 #[derive(Deserialize, Debug)]
 pub struct SearchResult {
     #[serde(rename = "results")]
-    pub rooms: Vec<Room>
+    pub rooms: Vec<Room>,
 }

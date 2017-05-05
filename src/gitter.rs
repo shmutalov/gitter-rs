@@ -3,6 +3,7 @@ use std::collections::HashMap;
 use reqwest::{Client, IntoUrl};
 use serde::{Deserialize, Serialize};
 use serde_urlencoded;
+use std::time::Duration;
 
 use models::*;
 
@@ -30,10 +31,13 @@ impl<'a> Gitter<'a> {
     pub fn new<S>(token: S) -> Gitter<'a>
         where S: Into<Cow<'a, str>>
     {
+        let mut client = Client::new().unwrap();
+        client.timeout(Duration::from_secs(40));
+
         let gitter = Gitter {
             token: token.into(),
             api_base_url: API_BASE_URL.into(),
-            client: Client::new().unwrap(),
+            client: client,
         };
 
         gitter
@@ -105,9 +109,10 @@ impl<'a> Gitter<'a> {
     pub fn send_message<S>(&self, room_id: S, text: S) -> ApiResult<()>
         where S: Into<String>
     {
-        let mut full_url = self.api_base_url.to_string() + "rooms/" + &room_id.into() +"/chatMessages";
-        let msg = OutMessage{text: text.into()};
-        
+        let mut full_url = self.api_base_url.to_string() + "rooms/" + &room_id.into() +
+                           "/chatMessages";
+        let msg = OutMessage { text: text.into() };
+
         self.post(&full_url, &msg)
     }
 
@@ -115,9 +120,9 @@ impl<'a> Gitter<'a> {
     pub fn join_room<S>(&self, room_id: S, user_id: S) -> ApiResult<Room>
         where S: Into<String>
     {
-        let mut full_url = self.api_base_url.to_string() + "user/" + &user_id.into() +"/rooms";
-        let room = JoinRoom{id: room_id.into()};
-        
+        let mut full_url = self.api_base_url.to_string() + "user/" + &user_id.into() + "/rooms";
+        let room = JoinRoom { id: room_id.into() };
+
         self.post(&full_url, &room)
     }
 
@@ -125,8 +130,8 @@ impl<'a> Gitter<'a> {
     pub fn leave_room<S>(&self, room_id: S, user_id: S) -> ApiResult<()>
         where S: Into<String>
     {
-        let mut full_url = self.api_base_url.to_string() + "rooms/" + &room_id.into() +
-                           "/users/" + &user_id.into();
+        let mut full_url = self.api_base_url.to_string() + "rooms/" + &room_id.into() + "/users/" +
+                           &user_id.into();
 
         self.delete(&full_url)
     }
@@ -136,7 +141,8 @@ impl<'a> Gitter<'a> {
         where S: Into<String>
     {
         let query = &[("q", &room.into())];
-        let mut full_url = self.api_base_url.to_string() + "rooms?" + &serde_urlencoded::to_string(query).unwrap();
+        let mut full_url = self.api_base_url.to_string() + "rooms?" +
+                           &serde_urlencoded::to_string(query).unwrap();
 
         self.get(&full_url)
     }
@@ -153,7 +159,7 @@ impl<'a> Gitter<'a> {
                 return Ok(room.id.to_string());
             }
         }
-        
+
         Err(ApiError::RoomNotFound)
     }
 
