@@ -1,4 +1,8 @@
 # gitter-rs
+
+[![license](https://img.shields.io/badge/license-MIT_or_Apache_2.0-blue.svg "License")](#license)
+[![Join the chat at https://gitter.im/gitter-rs/general](https://badges.gitter.im/gitter-rs/general.svg)](https://gitter.im/gitter-rs/general?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 Gitter API in Rust 
 
  **`WIP`**
@@ -16,6 +20,7 @@ gitter = { git = "https://github.com/shmutalov/gitter-rs" }
 - [Users](#users)
 - [Rooms](#rooms)
 - [Messages](#messages)
+- [License](#license)
 
 ##### Initialize
 
@@ -89,3 +94,9 @@ let message = api.get_message("roomID", "messageID").unwrap();
 ```rust
 api.send_message("roomID", "free chat text").unwrap();
 ```
+
+##### License
+
+`gitter-rs` is distributed under the terms of both the MIT license and the Apache License (Version 2.0).
+
+See [`LICENSE-APACHE`](LICENSE-APACHE) and [`LICENSE-MIT`](LICENSE-APACHE) for details.
