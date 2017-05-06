@@ -1,5 +1,9 @@
 language: rust
 
+os:
+    - linux
+    - osx
+    
 env:
   - secure: "ehx53TBENShibDvpFIB+9lRMrvrBOgK66uZHwDIlIk+XbOk27v/gd1JdDF/CgxPXFQrlemEsWGr5M0octGKh8LrEmctpjigS+b6RZDGOaj4VAi9Ky1Gu31LxH8IVYqKGQ7HPrdzitKCeKQdSdCJjbrTeba8i1jmKECZ2gJS70tJwGgPdVeVddqF3K4ORIphtVYmf2oB2KtFQBt/+SKtxaaVhFPP6pwVTWuKxd+c+r7jR5WFbRBArd15ZFaydRRyMRxaeezqMoUNMoxYCA1h/OpA48M8iPRZ/qxrmT5TCor+5bH9XOyeFbjldYAHWIhW0rDMWApdrEqjranaMszubszpSNwlJu/sLAWEuIPTg2mZMF2L7f6+tqCPk1p7etCPqQkM9a9bocQpBF0BAlpKnyKe72lfx8c61ifmj4zbMPj9AKcSTKReSYAnqfDarcoAPxjiAyXDgPaPikH0I/m+ui+Trv6/EewuSHIgI7Jwy+PO3jxiPixn2O7ceTGQ7D+QNWzomrEm4GMEpMV0IsOWTywOTV5jdEWGOzi102tMDZZ/WvnKjpyfJgaq5g/dcD3zpsZX8WCZvxJMPNATgk3YI216KTDQApv2ayabF5cAJ6CQ6FxHGPwOkuzpXL5Byh+1f0A//1XCF7VvB0cbg4sbGnnQNLoCsa6B/wbktRySB0oY="
 
