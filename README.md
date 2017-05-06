@@ -10,7 +10,12 @@ Gitter API in Rust
 
 https://developer.gitter.im
 
-#### Install
+# Building
+```sh
+cargo build
+```
+
+# Install
 
 ```toml
 [dependencies]
@@ -21,9 +26,10 @@ gitter = { git = "https://github.com/shmutalov/gitter-rs" }
 - [Users](#users)
 - [Rooms](#rooms)
 - [Messages](#messages)
+- [Roadmap](#roadmap)
 - [License](#license)
 
-##### Initialize
+# Initialize
 
 ```rust
 extern crate gitter;
@@ -34,7 +40,7 @@ use gitter::Gitter;
 let api = Gitter::new("YOUR_ACCESS_TOKEN");
 ```
 
-##### Users
+# Users
 
 - Get current user
 
@@ -42,61 +48,57 @@ let api = Gitter::new("YOUR_ACCESS_TOKEN");
 let user = api.get_user().unwrap();
 ```
 
-##### Rooms
+# Rooms
 
-- Get all rooms
+
 ```rust
+// Get all rooms
 let rooms = api.get_rooms().unwrap();
-```
 
-- Get room by id
-```rust
+// Get room by id
 let room = api.get_room("roomID").unwrap();
-```
 
-- Get rooms of some user
-```rust
+// Get rooms of some user
 let rooms = api.get_rooms("userID").unwrap();
-```
 
-- Join room
-```rust
+// Join room
 let room = api.join_room("roomID", "userID").unwrap();
-```
-	
-- Leave room
-```rust
+
+// Leave room
 let room = api.leave_room("roomID", "userID").unwrap();
-```
 
-- Get room id
-```rust
+// Get room id
 let room_id = api.get_room_id("room/uri").unwrap();
-```
 
-- Search gitter rooms
-```rust
+// Search gitter rooms
 let rooms = api.search_rooms("search/string").unwrap();
 ```
 
-##### Messages
+# Messages
 
-- Get messages of room
 ```rust
+// Get messages of room
 let messages = api.get_messages("roomID", None).unwrap();
-```
 
-- Get one message
-```rust
+// Get one message
 let message = api.get_message("roomID", "messageID").unwrap();
-```
 
-- Send message
-```rust
+// Send message
 api.send_message("roomID", "free chat text").unwrap();
 ```
 
-##### License
+# Roadmap
+
+This project is a work in progress.
+
+- [x] Implement base Rest API's and add some test
+- [ ] Implement all Rest API methods
+- [ ] Add support for Streaming API
+- [ ] Add support for Faye [_Optional_]
+- [ ] Cover with tests
+- [ ] Add examples
+
+# License
 
 `gitter-rs` is distributed under the terms of both the MIT license and the Apache License (Version 2.0).
 
