@@ -6,7 +6,7 @@
 
 Gitter API in Rust 
 
- **`WIP`**
+ [**`WIP`**](#roadmap)
 
 https://developer.gitter.im
 
