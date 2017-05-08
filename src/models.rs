@@ -270,3 +270,39 @@ pub struct SearchResult {
     #[serde(rename = "results")]
     pub rooms: Vec<Room>,
 }
+
+#[derive(Deserialize, Debug)]
+pub struct Group {
+    /// Group ID
+    pub id: String,
+
+    /// Group name.
+    pub name: String,
+
+    /// Group URI on Gitter.
+    pub uri: String,
+
+    /// Security descriptor. Describes the backing object we get permissions from.
+    pub backed_by: BackedBy,
+
+    /// Base avatar URL (add s parameter to size)
+    pub avatar_url: String,
+}
+
+/// Security descriptor. Describes the backing object we get permissions from.
+#[derive(Deserialize, Debug)]
+pub struct BackedBy {
+    pub group_type: String,
+
+    /// Represents how we find the backing object given the type
+    pub link_path: String,
+}
+
+#[derive(Deserialize, Debug)]
+#[serde(rename_all = "SCREAMING_SNAKE_CASE")]
+pub enum GroupType {
+    OneToOne,
+    GhRepo,
+    GhOrg,
+    GhUser,
+}

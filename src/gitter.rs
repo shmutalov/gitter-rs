@@ -219,6 +219,20 @@ impl<'a> Gitter<'a> {
             .ok_or(ApiError::RoomNotFound)
     }
 
+    // Returns a list of groups the current user is in
+    pub fn get_groups(&self) -> ApiResult<Vec<Group>> {
+        let full_url = self.api_base_url.to_string() + "groups";
+        self.get(&full_url)
+    }
+
+    /// List of rooms nested under the specified group.
+    pub fn get_group_room<S>(&self, group_id: S) -> ApiResult<Vec<Room>> 
+        where S: Into<String>
+    {
+        let full_url = self.api_base_url.to_string() + "groups/" + group_id.into() + "/rooms";
+        self.get(&full_url)
+    }
+
     // create default headers
     fn default_headers(&self) -> Headers {
         let mut headers = Headers::new();
