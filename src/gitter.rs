@@ -174,7 +174,7 @@ impl<'a> Gitter<'a> {
                 }
 
                 return Err(ApiError::RoomNotFound);
-            }
+            },
             Err(e) => Err(e),
         }
     }
