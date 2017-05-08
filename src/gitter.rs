@@ -168,7 +168,7 @@ impl<'a> Gitter<'a> {
         match self.search_rooms(url) {
             Ok(s) => {
                 if let Some(room) = s.rooms
-                                     .into_iter()
+                                     .iter()
                                      .find(|r| r.uri.as_ref().map_or(false, |x| x == &url2)) {
                     return Ok(room.id.to_string());
                 }
