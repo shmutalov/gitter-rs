@@ -54,7 +54,7 @@ impl<'a> Gitter<'a> {
                 if users.len() > 0 {
                     return Ok(users[0].clone());
                 } else {
-                    return Err(ApiError::RoomNotFound);
+                    return Err(ApiError::UserNotFound);
                 }
             }
             Err(e) => Err(e),
@@ -160,24 +160,16 @@ impl<'a> Gitter<'a> {
 
     // Returns the room ID of a given URI
     pub fn get_room_id<S>(&self, uri: S) -> ApiResult<String>
-        where S: Into<String>
+        where S: AsRef<str>
     {
-        let url = uri.into();
-        let url2 = url.clone();
-
-        match self.search_rooms(url) {
-            Ok(s) => {
-                if let Some(room) = s.rooms
-                                     .iter()
-                                     .find(|r| r.uri.as_ref().map_or(false, |x| x == &url2)) {
-                    return Ok(room.id.to_string());
-                }
-
-                return Err(ApiError::RoomNotFound);
-            },
-            Err(e) => Err(e),
-        }
+        let uri = uri.as_ref();
+        self.search_rooms(uri.to_string())?
+            .rooms.iter()
+            .find(|r| r.uri.as_ref().map_or(false, |u| u == uri))
+            .map(|r| r.id.to_string())
+            .ok_or(ApiError::RoomNotFound)
     }
+        
 
     // create default headers
     fn default_headers(&self) -> Headers {
