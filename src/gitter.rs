@@ -229,7 +229,7 @@ impl<'a> Gitter<'a> {
     pub fn get_group_room<S>(&self, group_id: S) -> ApiResult<Vec<Room>> 
         where S: Into<String>
     {
-        let full_url = self.api_base_url.to_string() + "groups/" + group_id.into() + "/rooms";
+        let full_url = self.api_base_url.to_string() + "groups/" + &group_id.into() + "/rooms";
         self.get(&full_url)
     }
 
