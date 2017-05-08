@@ -169,7 +169,6 @@ impl<'a> Gitter<'a> {
             .map(|r| r.id.to_string())
             .ok_or(ApiError::RoomNotFound)
     }
-        
 
     // create default headers
     fn default_headers(&self) -> Headers {

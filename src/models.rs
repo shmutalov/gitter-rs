@@ -1,9 +1,27 @@
 use chrono::{DateTime, UTC};
 
-// A Room in Gitter can represent a GitHub Organization, a GitHub Repository,
-// a Gitter Channel or a One-to-one conversation.
-// In the case of the Organizations and Repositories,
-// the access control policies are inherited from GitHub.
+#[derive(Deserialize, Debug)]
+#[serde(rename_all = "SCREAMING_SNAKE_CASE")]
+pub enum GithubType {
+    /// A room that represents a GitHub Organisation.
+    Org,
+    ///  A room that represents a GitHub Repository.
+    Repo,
+    /// A one-to-one chat.
+    #[serde(rename = "ONETOONE")]
+    OneToOne, 
+    /// A Gitter channel nested under a GitHub Organisation.
+    OrgChannel, 
+    /// A Gitter channel nested under a GitHub Repository.
+    RepoChannel, 
+    /// A Gitter channel nested under a GitHub User.
+    UserChannel, 
+}
+
+/// A Room in Gitter can represent a GitHub Organization, a GitHub Repository,
+/// a Gitter Channel or a One-to-one conversation.
+/// In the case of the Organizations and Repositories,
+/// the access control policies are inherited from GitHub.
 #[derive(Deserialize, Debug)]
 pub struct Room {
     // Room ID
@@ -51,7 +69,7 @@ pub struct Room {
     // - REPO_CHANNEL A Gitter channel nested under a GitHub Repository.
     // - USER_CHANNEL A Gitter channel nested under a GitHub User.
     #[serde(rename = "githubType")]
-    pub github_type: String,
+    pub github_type: GithubType,
 
     // Tags that define the room
     pub tags: Option<Vec<String>>,
