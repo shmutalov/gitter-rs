@@ -132,7 +132,47 @@ impl<'a> Gitter<'a> {
         where S: Into<String>
     {
         let full_url = self.api_base_url.to_string() + "user/" + &user_id.into() + "/rooms";
-        let room = JoinRoom { id: room_id.into() };
+        let room = JoinRoom::from_id(room_id);
+
+        self.post(&full_url, &room)
+    }
+
+    /// Join a room (uri method)
+    pub fn join_room_by_uri<S>(&self, uri: S) -> ApiResult<Room>
+        where S: Into<String>
+    {
+        let full_url = self.api_base_url.to_string() + "/rooms";
+        let room = JoinRoom::from_uri(uri.into());
+
+        self.post(&full_url, &room)
+    }
+
+    /// Update a room topic
+    pub fn update_room_topic<S>(&self, room_id: S, topic: S) -> ApiResult<Room>
+        where S: Into<String>
+    {
+        let full_url = self.api_base_url.to_string() + "/rooms" + &room_id.into();
+        let room = UpdateRoom::from_topic(topic.into());
+
+        self.post(&full_url, &room)
+    }
+
+    /// Update a room noindex (indexing in search engines)
+    pub fn update_room_noindex<S>(&self, room_id: S, noindex: bool) -> ApiResult<Room>
+        where S: Into<String>
+    {
+        let full_url = self.api_base_url.to_string() + "/rooms" + &room_id.into();
+        let room = UpdateRoom::from_noindex(noindex.into());
+
+        self.post(&full_url, &room)
+    }
+
+    /// Update a room topic
+    pub fn update_room_tags<S>(&self, room_id: S, tags: S) -> ApiResult<Room>
+        where S: Into<String>
+    {
+        let full_url = self.api_base_url.to_string() + "/rooms" + &room_id.into();
+        let room = UpdateRoom::from_tags(tags.into());
 
         self.post(&full_url, &room)
     }
@@ -143,6 +183,15 @@ impl<'a> Gitter<'a> {
     {
         let full_url = self.api_base_url.to_string() + "rooms/" + &room_id.into() + "/users/" +
                        &user_id.into();
+
+        self.delete(&full_url)
+    }
+
+    // Delete a room
+    pub fn delete_room<S>(&self, room_id: S) -> ApiResult<()>
+        where S: Into<String>
+    {
+        let full_url = self.api_base_url.to_string() + "rooms/" + &room_id.into();
 
         self.delete(&full_url)
     }

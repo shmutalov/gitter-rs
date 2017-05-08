@@ -5,7 +5,7 @@ use chrono::{DateTime, UTC};
 pub enum GithubType {
     /// A room that represents a GitHub Organisation.
     Org,
-    ///  A room that represents a GitHub Repository.
+    /// A room that represents a GitHub Repository.
     Repo,
     /// A one-to-one chat.
     #[serde(rename = "ONETOONE")]
@@ -87,7 +87,80 @@ pub struct Room {
 #[derive(Serialize, Debug)]
 pub struct JoinRoom {
     // Room ID to join
-    pub id: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub id: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub uri: Option<String>,
+}
+
+impl JoinRoom {
+    /// Create join room request from room ID
+    pub fn from_id<S>(id: S) -> JoinRoom 
+        where S: Into<String>
+    {
+        JoinRoom {
+            id: Some(id.into()),
+            uri: None,
+        }
+    }
+
+    /// Create join room request from URI
+    pub fn from_uri<S>(uri: S) -> JoinRoom 
+        where S: Into<String> 
+    {
+        JoinRoom {
+            id: None,
+            uri: Some(uri.into()),
+        }
+    }
+}
+
+#[derive(Serialize, Debug)]
+pub struct UpdateRoom {
+    /// Room topic
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub topic: Option<String>,
+
+    /// Whether the room is indexed by search engines
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub noindex: Option<bool>,
+
+    /// Tags that define the room
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub tags: Option<String>
+}
+
+impl UpdateRoom {
+    /// Create update room request only with topic parameter
+    pub fn from_topic<S>(topic: S) -> UpdateRoom 
+        where S: Into<String>
+    {
+        UpdateRoom {
+            topic: Some(topic.into()),
+            noindex: None,
+            tags: None
+        }
+    }
+
+    /// Create update room request only with noindex parameter
+    pub fn from_noindex(noindex: bool) -> UpdateRoom {
+        UpdateRoom {
+            topic: None,
+            noindex: Some(noindex),
+            tags: None
+        }
+    }
+
+    /// Create update room request only with tags parameter
+    pub fn from_tags<S>(tags: S) -> UpdateRoom 
+        where S: Into<String>
+    {
+        UpdateRoom {
+            topic: None,
+            noindex: None,
+            tags: Some(tags.into()),
+        }
+    }
 }
 
 #[derive(Deserialize, Debug, Clone)]
