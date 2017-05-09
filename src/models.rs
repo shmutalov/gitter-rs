@@ -282,12 +282,12 @@ pub struct Group {
     /// Group URI on Gitter.
     pub uri: String,
 
-    #[serde(rename = "backedBy")]
     /// Security descriptor. Describes the backing object we get permissions from.
+    #[serde(rename = "backedBy")]
     pub backed_by: BackedBy,
 
-    #[serde(rename = "avatarUrl")]
     /// Base avatar URL (add s parameter to size)
+    #[serde(rename = "avatarUrl")]
     pub avatar_url: String,
 }
 
@@ -312,10 +312,97 @@ pub enum GroupType {
 }
 
 /// Unread messages and mentions
-#[derive(Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug)]
 pub struct UnreadItems {
     /// Unread messages
     pub chat: Option<Vec<String>>,
+
     /// Mentioned messaged
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub mention: Option<Vec<String>>,
 }
+
+impl UnreadItems {
+    pub fn from_msg_ids(msg_ids: &Vec<String>) -> UnreadItems {
+        UnreadItems {
+            chat: Some(Vec::from_iter(&msg_ids.iter())),
+            mention: None,
+        }
+    }
+}
+
+/// Github organization
+#[derive(Deserialize, Debug)]
+pub struct Organization {
+    /// Organization ID
+    pub id: u64,
+
+    /// Organization name
+    pub name: String,
+
+    /// Organization avatar url
+    #[serde(rename = "avatarUrl")]
+    pub avatar_url: Option<String>,
+
+    /// Organization respective room
+    pub room: Option<Room>,
+}
+
+/// Github repository info
+#[derive(Deserialize, Debug)]
+pub struct Repository {
+    /// Repository ID
+    pub id: u64,
+
+    /// Repository name
+    pub name: String,
+    
+    /// Repository URI
+    pub uri: String,
+
+    /// Determines whether repository is private or not
+    pub private: bool,
+
+    /// Repository respective room
+    pub room: Option<Room>,
+}
+
+/// Gitter channel
+#[derive(Deserialize, Debug)]
+pub struct Channel {
+    /// Channel ID
+    pub id: String,
+
+    /// Channel name
+    pub name: String,
+
+    /// Channel topic
+    pub topic: String,
+
+    /// Channel URI
+    pub uri: Option<String>,
+
+    /// Is channel one-to-one
+    #[serde(rename = "oneToOne")]
+    pub one_to_one: bool,
+
+    /// Unread items in channel
+    pub unread_items: i32,
+
+    /// Mentions in channel
+    pub mentions: i32,
+
+    /// Last access date and time
+    #[serde(rename = "lastAccessTime")]
+    pub last_access_time: Option<DateTime<UTC>>,
+
+    pub lurk: bool,
+
+    pub url: String,
+
+    #[serde(rename = "githubType")]
+    pub github_type: GithubType,
+
+    pub security: String,
+}
+
