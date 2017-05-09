@@ -37,13 +37,11 @@ impl<'a> Gitter<'a> {
         let mut client = Client::new().unwrap();
         client.timeout(Duration::from_secs(40));
 
-        let gitter = Gitter {
+        Gitter {
             token: token.into(),
             api_base_url: API_BASE_URL.into(),
             client: client,
-        };
-
-        gitter
+        }
     }
 
     // Returns the current user
@@ -51,10 +49,10 @@ impl<'a> Gitter<'a> {
         let full_url = self.api_base_url.to_string() + "user";
         match self.get::<&str, Vec<User>>(&full_url) {
             Ok(users) => {
-                if users.len() > 0 {
-                    return Ok(users[0].clone());
+                if !users.is_empty() {
+                    Ok(users[0].clone())
                 } else {
-                    return Err(ApiError::UserNotFound);
+                    Err(ApiError::UserNotFound)
                 }
             }
             Err(e) => Err(e),
