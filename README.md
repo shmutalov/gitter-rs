@@ -94,7 +94,7 @@ This project is a work in progress.
 
 - [x] Implement base Rest API's and add some tests
 - [ ] Test `send_message` method
-- [ ] Implement all Rest API methods
+- [x] Implement all Rest API methods
 - [ ] Add support for Streaming API
 - [ ] Add support for Faye [_Optional_]
 - [ ] Add support for automated access token retreive via Github authentification
