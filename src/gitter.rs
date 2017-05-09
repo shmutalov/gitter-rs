@@ -63,9 +63,17 @@ impl<'a> Gitter<'a> {
 
     // Returns a list of Rooms the user is part of
     pub fn get_user_rooms<S>(&self, user_id: S) -> ApiResult<Vec<Room>>
-        where S: Into<String>
+        where S: AsRef<str>
     {
-        let full_url = self.api_base_url.to_string() + "user/" + &user_id.into() + "/rooms";
+        let full_url = self.api_base_url.to_string() + "user/" + user_id.as_ref() + "/rooms";
+        self.get(&full_url)
+    }
+
+    /// Receive user's unread items and mentions in the room 
+    pub fn get_unread_items<S>(&self, user_id: S, room_id: S) -> ApiResult<UnreadItems> 
+        where S: AsRef<str>
+    {
+        let full_url = self.api_base_url.to_string() + "user/" + user_id.as_ref() + "/rooms" + room_id.as_ref() + "/unreadItems";
         self.get(&full_url)
     }
 
@@ -77,26 +85,26 @@ impl<'a> Gitter<'a> {
 
     // Returns the users in the room with the passed id
     pub fn get_users_in_room<S>(&self, room_id: S) -> ApiResult<Vec<User>>
-        where S: Into<String>
+        where S: AsRef<str>
     {
-        let full_url = self.api_base_url.to_string() + "rooms/" + &room_id.into() + "/users";
+        let full_url = self.api_base_url.to_string() + "rooms/" + room_id.as_ref() + "/users";
         self.get(&full_url)
     }
 
     // Returns a room with the passed id
     pub fn get_room<S>(&self, room_id: S) -> ApiResult<Room>
-        where S: Into<String>
+        where S: AsRef<str>
     {
-        let full_url = self.api_base_url.to_string() + "rooms/" + &room_id.into();
+        let full_url = self.api_base_url.to_string() + "rooms/" + room_id.as_ref();
         self.get(&full_url)
     }
 
     // Returns a list of messages in a room.
     // Pagination is optional. You can pass nil or specific pagination params.
     pub fn get_messages<S>(&self, room_id: S, params: Option<Pagination>) -> ApiResult<Vec<Message>>
-        where S: Into<String>
+        where S: AsRef<str>
     {
-        let mut full_url = self.api_base_url.to_string() + "rooms/" + &room_id.into() +
+        let mut full_url = self.api_base_url.to_string() + "rooms/" + room_id.as_ref() +
                            "/chatMessages";
 
         if let Some(p) = params {
@@ -109,39 +117,39 @@ impl<'a> Gitter<'a> {
 
     // Returns a message in a room.
     pub fn get_message<S>(&self, room_id: S, message_id: S) -> ApiResult<Message>
-        where S: Into<String>
+        where S: AsRef<str>
     {
-        let full_url = self.api_base_url.to_string() + "rooms/" + &room_id.into() +
-                       "/chatMessages/" + &message_id.into();
+        let full_url = self.api_base_url.to_string() + "rooms/" + room_id.as_ref() +
+                       "/chatMessages/" + message_id.as_ref();
 
         self.get(&full_url)
     }
 
     // Sends a message to a room
     pub fn send_message<S>(&self, room_id: S, text: S) -> ApiResult<()>
-        where S: Into<String>
+        where S: AsRef<str>
     {
-        let full_url = self.api_base_url.to_string() + "rooms/" + &room_id.into() + "/chatMessages";
-        let msg = OutMessage { text: text.into() };
+        let full_url = self.api_base_url.to_string() + "rooms/" + room_id.as_ref() + "/chatMessages";
+        let msg = OutMessage { text: text.as_ref().to_string() };
 
         self.post(&full_url, &msg)
     }
 
     // Update a message
     pub fn update_message<S>(&self, room_id: S, msg_id: S, text: S) -> ApiResult<()>
-        where S: Into<String>
+        where S: AsRef<str>
     {
-        let full_url = self.api_base_url.to_string() + "rooms/" + &room_id.into() + "/chatMessages/" + &msg_id.into();
-        let msg = OutMessage { text: text.into() };
+        let full_url = self.api_base_url.to_string() + "rooms/" + room_id.as_ref() + "/chatMessages/" + msg_id.as_ref();
+        let msg = OutMessage { text: text.as_ref().to_string() };
 
         self.put(&full_url, &msg)
     }
 
     // Joins a room
     pub fn join_room<S>(&self, room_id: S, user_id: S) -> ApiResult<Room>
-        where S: Into<String>
+        where S: AsRef<str>
     {
-        let full_url = self.api_base_url.to_string() + "user/" + &user_id.into() + "/rooms";
+        let full_url = self.api_base_url.to_string() + "user/" + user_id.as_ref() + "/rooms";
         let room = JoinRoom::from_id(room_id);
 
         self.post(&full_url, &room)
@@ -149,29 +157,29 @@ impl<'a> Gitter<'a> {
 
     /// Join a room (uri method)
     pub fn join_room_by_uri<S>(&self, uri: S) -> ApiResult<Room>
-        where S: Into<String>
+        where S: AsRef<str>
     {
         let full_url = self.api_base_url.to_string() + "/rooms";
-        let room = JoinRoom::from_uri(uri.into());
+        let room = JoinRoom::from_uri(uri);
 
         self.post(&full_url, &room)
     }
 
     /// Update a room topic
     pub fn update_room_topic<S>(&self, room_id: S, topic: S) -> ApiResult<Room>
-        where S: Into<String>
+        where S: AsRef<str>
     {
-        let full_url = self.api_base_url.to_string() + "/rooms" + &room_id.into();
-        let room = UpdateRoom::from_topic(topic.into());
+        let full_url = self.api_base_url.to_string() + "/rooms" + room_id.as_ref();
+        let room = UpdateRoom::from_topic(topic);
 
         self.post(&full_url, &room)
     }
 
     /// Update a room noindex (indexing in search engines)
     pub fn update_room_noindex<S>(&self, room_id: S, noindex: bool) -> ApiResult<Room>
-        where S: Into<String>
+        where S: AsRef<str>
     {
-        let full_url = self.api_base_url.to_string() + "/rooms" + &room_id.into();
+        let full_url = self.api_base_url.to_string() + "/rooms" + room_id.as_ref();
         let room = UpdateRoom::from_noindex(noindex.into());
 
         self.post(&full_url, &room)
@@ -179,38 +187,38 @@ impl<'a> Gitter<'a> {
 
     /// Update a room topic
     pub fn update_room_tags<S>(&self, room_id: S, tags: S) -> ApiResult<Room>
-        where S: Into<String>
+        where S: AsRef<str>
     {
-        let full_url = self.api_base_url.to_string() + "/rooms" + &room_id.into();
-        let room = UpdateRoom::from_tags(tags.into());
+        let full_url = self.api_base_url.to_string() + "/rooms" + room_id.as_ref();
+        let room = UpdateRoom::from_tags(tags);
 
         self.post(&full_url, &room)
     }
 
     // Removes a user from the room
     pub fn leave_room<S>(&self, room_id: S, user_id: S) -> ApiResult<()>
-        where S: Into<String>
+        where S: AsRef<str>
     {
-        let full_url = self.api_base_url.to_string() + "rooms/" + &room_id.into() + "/users/" +
-                       &user_id.into();
+        let full_url = self.api_base_url.to_string() + "rooms/" + room_id.as_ref() + "/users/" +
+                       user_id.as_ref();
 
         self.delete(&full_url)
     }
 
     // Delete a room
     pub fn delete_room<S>(&self, room_id: S) -> ApiResult<()>
-        where S: Into<String>
+        where S: AsRef<str>
     {
-        let full_url = self.api_base_url.to_string() + "rooms/" + &room_id.into();
+        let full_url = self.api_base_url.to_string() + "rooms/" + room_id.as_ref();
 
         self.delete(&full_url)
     }
 
     // Queries the Rooms resources of gitter API
     pub fn search_rooms<S>(&self, room: S) -> ApiResult<SearchResult>
-        where S: Into<String>
+        where S: AsRef<str>
     {
-        let query = &[("q", &room.into())];
+        let query = &[("q", room.as_ref())];
         let full_url = self.api_base_url.to_string() + "rooms?" +
                        &serde_urlencoded::to_string(query).unwrap();
 
@@ -237,9 +245,9 @@ impl<'a> Gitter<'a> {
 
     /// List of rooms nested under the specified group.
     pub fn get_group_rooms<S>(&self, group_id: S) -> ApiResult<Vec<Room>> 
-        where S: Into<String>
+        where S: AsRef<str>
     {
-        let full_url = self.api_base_url.to_string() + "groups/" + &group_id.into() + "/rooms";
+        let full_url = self.api_base_url.to_string() + "groups/" + group_id.as_ref() + "/rooms";
         self.get(&full_url)
     }
 

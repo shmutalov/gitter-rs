@@ -4,6 +4,11 @@ extern crate gitter;
 
 use gitter::*;
 
+fn get_gitter_api<'a>() -> Gitter<'a> {
+    let token = std::env::var("GITTER_BOT_TOKEN").unwrap();
+    Gitter::new(token)
+}
+
 #[test]
 fn deserialize_user() {
     let user_json_str = "[{
@@ -38,7 +43,7 @@ fn api_get_user_rooms() {
     let api = get_gitter_api();
 
     let user = api.get_user().unwrap();
-    let rooms = api.get_user_rooms(user.id);
+    let rooms = api.get_user_rooms(&user.id);
 
     assert!(rooms.is_ok());
 }
@@ -52,7 +57,7 @@ fn api_get_rooms() {
     
     assert!(rooms.is_ok());
 
-    let user_rooms = api.get_user_rooms(user.id);
+    let user_rooms = api.get_user_rooms(&user.id);
 
     assert!(user_rooms.is_ok());
 
@@ -64,7 +69,7 @@ fn api_get_users_in_room() {
     let api = get_gitter_api();
 
     let rooms = api.get_rooms().unwrap();
-    let users = api.get_users_in_room(rooms[0].id.as_ref());
+    let users = api.get_users_in_room(&rooms[0].id);
 
     assert!(users.is_ok());
 }
@@ -74,7 +79,7 @@ fn api_get_room() {
     let api = get_gitter_api();
 
     let rooms = api.get_rooms().unwrap();
-    let room = api.get_room(rooms[0].id.as_ref());
+    let room = api.get_room(&rooms[0].id);
 
     assert!(room.is_ok());
 }
@@ -84,7 +89,7 @@ fn api_get_messages_without_pagination() {
     let api = get_gitter_api();
 
     let rooms = api.get_rooms().unwrap();
-    let messages = api.get_messages(rooms[0].id.as_ref(), None);
+    let messages = api.get_messages(&rooms[0].id, None);
 
     assert!(messages.is_ok());
 }
@@ -101,7 +106,7 @@ fn api_get_messages_with_pagination() {
         before_id: None,
         query: None 
         };
-    let messages = api.get_messages(rooms[0].id.as_ref(), Some(pagination));
+    let messages = api.get_messages(&rooms[0].id, Some(pagination));
 
     assert!(messages.is_ok());
 }
@@ -111,8 +116,8 @@ fn api_get_message() {
     let api = get_gitter_api();
 
     let rooms = api.get_rooms().unwrap();
-    let messages = api.get_messages(rooms[0].id.as_ref(), None).unwrap();
-    let message = api.get_message(rooms[0].id.as_ref(), messages[0].id.as_ref());
+    let messages = api.get_messages(&rooms[0].id, None).unwrap();
+    let message = api.get_message(&rooms[0].id, &messages[0].id);
 
     assert!(message.is_ok());
 }
@@ -134,7 +139,7 @@ fn api_search_rooms() {
 
     let rooms = api.get_rooms().unwrap();
     let room = rooms.into_iter().find(|x| x.uri.is_some()).unwrap();
-    let search_result = api.search_rooms(room.name);
+    let search_result = api.search_rooms(&room.name);
 
     assert!(search_result.is_ok());
     assert!(search_result.unwrap().rooms.len() > 0);
@@ -143,25 +148,27 @@ fn api_search_rooms() {
 #[test]
 fn api_get_groups() {
     let api = get_gitter_api();
-    let user = api.get_user().unwrap();
-
-    let groups = api.get_groups().unwrap();
+    let groups = api.get_groups();
     
-    // assert!(groups.is_ok());
+    assert!(groups.is_ok());
 }
 
 #[test]
 fn api_get_group_rooms() {
     let api = get_gitter_api();
-    let user = api.get_user().unwrap();
-
     let groups = api.get_groups().unwrap();
-    let rooms = api.get_group_rooms(groups[0].id.as_ref());
+    let rooms = api.get_group_rooms(&groups[0].id);
 
     assert!(rooms.is_ok());
 }
 
-fn get_gitter_api<'a>() -> Gitter<'a> {
-    let token = std::env::var("GITTER_BOT_TOKEN").unwrap();
-    Gitter::new(token)
+#[test]
+fn api_get_unread_items() {
+    let api = get_gitter_api();
+    let user = api.get_user().unwrap();
+    let user_rooms = api.get_user_rooms(&user.id).unwrap();
+
+    let unread_items = api.get_unread_items(&user.id, &user_rooms[0].id).unwrap();
+
+
 }

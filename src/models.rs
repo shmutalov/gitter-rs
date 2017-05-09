@@ -96,21 +96,21 @@ pub struct JoinRoom {
 impl JoinRoom {
     /// Create join room request from room ID
     pub fn from_id<S>(id: S) -> JoinRoom 
-        where S: Into<String>
+        where S: AsRef<str>
     {
         JoinRoom {
-            id: Some(id.into()),
+            id: Some(id.as_ref().to_string()),
             uri: None,
         }
     }
 
     /// Create join room request from URI
     pub fn from_uri<S>(uri: S) -> JoinRoom 
-        where S: Into<String> 
+        where S: AsRef<str> 
     {
         JoinRoom {
             id: None,
-            uri: Some(uri.into()),
+            uri: Some(uri.as_ref().to_string()),
         }
     }
 }
@@ -133,10 +133,10 @@ pub struct UpdateRoom {
 impl UpdateRoom {
     /// Create update room request only with topic parameter
     pub fn from_topic<S>(topic: S) -> UpdateRoom 
-        where S: Into<String>
+        where S: AsRef<str>
     {
         UpdateRoom {
-            topic: Some(topic.into()),
+            topic: Some(topic.as_ref().to_string()),
             noindex: None,
             tags: None
         }
@@ -153,12 +153,12 @@ impl UpdateRoom {
 
     /// Create update room request only with tags parameter
     pub fn from_tags<S>(tags: S) -> UpdateRoom 
-        where S: Into<String>
+        where S: AsRef<str>
     {
         UpdateRoom {
             topic: None,
             noindex: None,
-            tags: Some(tags.into()),
+            tags: Some(tags.as_ref().to_string()),
         }
     }
 }
@@ -309,4 +309,13 @@ pub enum GroupType {
     GhRepo,
     GhOrg,
     GhUser,
+}
+
+/// Unread messages and mentions
+#[derive(Deserialize, Debug)]
+pub struct UnreadItems {
+    /// Unread messages
+    pub chat: Option<Vec<String>>,
+    /// Mentioned messaged
+    pub mention: Option<Vec<String>>,
 }
