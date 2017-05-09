@@ -325,7 +325,7 @@ pub struct UnreadItems {
 impl UnreadItems {
     pub fn from_msg_ids(msg_ids: &Vec<String>) -> UnreadItems {
         UnreadItems {
-            chat: Some(Vec::from_iter(&msg_ids.iter())),
+            chat: Some(msg_ids.clone()),
             mention: None,
         }
     }
