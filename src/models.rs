@@ -386,6 +386,7 @@ pub struct Channel {
     #[serde(rename = "oneToOne")]
     pub one_to_one: bool,
 
+    #[serde(rename = "unreadItems")]
     /// Unread items in channel
     pub unread_items: i32,
 

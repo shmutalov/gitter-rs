@@ -172,3 +172,25 @@ fn api_get_unread_items() {
 
     assert!(unread_items.is_ok());
 }
+
+#[test]
+fn api_get_user_organizations() {
+    let api = get_gitter_api();
+    let user = api.get_user().unwrap();
+    let user_orgs = api.get_user_organizations(&user.id).unwrap();
+}
+
+#[test]
+fn api_get_user_repositories() {
+    let api = get_gitter_api();
+    let user = api.get_user().unwrap();
+    let user_repos = api.get_user_repositories(&user.id).unwrap();
+}
+
+#[test]
+#[ignore]
+fn api_get_user_channels() {
+    let api = get_gitter_api();
+    let user = api.get_user().unwrap();
+    let user_repos = api.get_user_channels(&user.id).unwrap();
+}

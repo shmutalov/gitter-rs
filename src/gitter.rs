@@ -75,9 +75,42 @@ impl<'a> Gitter<'a> {
         self.get(&full_url)
     }
 
+    /// Mark user's given room messages as read
+    pub fn mark_messages_as_read<S>(&self, user_id: S, room_id: S, message_ids: &Vec<String>) -> ApiResult<()> 
+        where S: AsRef<str>
+    {
+        let full_url = self.api_base_url.to_string() + "user/" + user_id.as_ref() + "/rooms" + room_id.as_ref() + "/unreadItems";
+        let unread_items = UnreadItems::from_msg_ids(message_ids);
+        self.post(&full_url, &unread_items)
+    }
+
     /// Returns a list of rooms the current user is in
     pub fn get_rooms(&self) -> ApiResult<Vec<Room>> {
         let full_url = self.api_base_url.to_string() + "rooms";
+        self.get(&full_url)
+    }
+
+    /// List of the user's GitHub Organizations and their respective Room if available.
+    pub fn get_user_organizations<S>(&self, user_id: S) -> ApiResult<Vec<Organization>> 
+        where S: AsRef<str>
+    {
+        let full_url = self.api_base_url.to_string() + "user/" + user_id.as_ref() + "/orgs";
+        self.get(&full_url)
+    }
+
+    /// List of the user's GitHub Repositories and their respective Room if available.
+    pub fn get_user_repositories<S>(&self, user_id: S) -> ApiResult<Vec<Repository>> 
+        where S: AsRef<str>
+    {
+        let full_url = self.api_base_url.to_string() + "user/" + user_id.as_ref() + "/repos";
+        self.get(&full_url)
+    }
+
+    /// List of Gitter channels nested under the current user.
+    pub fn get_user_channels<S>(&self, user_id: S) -> ApiResult<Vec<Channel>> 
+        where S: AsRef<str>
+    {
+        let full_url = self.api_base_url.to_string() + "user/" + user_id.as_ref() + "/channels";
         self.get(&full_url)
     }
 
