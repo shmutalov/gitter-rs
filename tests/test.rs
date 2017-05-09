@@ -140,6 +140,27 @@ fn api_search_rooms() {
     assert!(search_result.unwrap().rooms.len() > 0);
 }
 
+#[test]
+fn api_get_groups() {
+    let api = get_gitter_api();
+    let user = api.get_user().unwrap();
+
+    let groups = api.get_groups().unwrap();
+    
+    // assert!(groups.is_ok());
+}
+
+#[test]
+fn api_get_group_rooms() {
+    let api = get_gitter_api();
+    let user = api.get_user().unwrap();
+
+    let groups = api.get_groups().unwrap();
+    let rooms = api.get_group_rooms(groups[0].id.as_ref());
+
+    assert!(rooms.is_ok());
+}
+
 fn get_gitter_api<'a>() -> Gitter<'a> {
     let token = std::env::var("GITTER_BOT_TOKEN").unwrap();
     Gitter::new(token)

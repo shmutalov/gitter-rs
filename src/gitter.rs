@@ -236,7 +236,7 @@ impl<'a> Gitter<'a> {
     }
 
     /// List of rooms nested under the specified group.
-    pub fn get_group_room<S>(&self, group_id: S) -> ApiResult<Vec<Room>> 
+    pub fn get_group_rooms<S>(&self, group_id: S) -> ApiResult<Vec<Room>> 
         where S: Into<String>
     {
         let full_url = self.api_base_url.to_string() + "groups/" + &group_id.into() + "/rooms";

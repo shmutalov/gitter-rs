@@ -282,9 +282,11 @@ pub struct Group {
     /// Group URI on Gitter.
     pub uri: String,
 
+    #[serde(rename = "backedBy")]
     /// Security descriptor. Describes the backing object we get permissions from.
     pub backed_by: BackedBy,
 
+    #[serde(rename = "avatarUrl")]
     /// Base avatar URL (add s parameter to size)
     pub avatar_url: String,
 }
@@ -292,10 +294,12 @@ pub struct Group {
 /// Security descriptor. Describes the backing object we get permissions from.
 #[derive(Deserialize, Debug)]
 pub struct BackedBy {
-    pub group_type: String,
+    #[serde(rename = "type")]
+    pub group_type: Option<GroupType>,
 
     /// Represents how we find the backing object given the type
-    pub link_path: String,
+    #[serde(rename = "linkPath")]
+    pub link_path: Option<String>,
 }
 
 #[derive(Deserialize, Debug)]
