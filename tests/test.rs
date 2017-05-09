@@ -54,7 +54,7 @@ fn api_get_rooms() {
     let user = api.get_user().unwrap();
 
     let rooms = api.get_rooms();
-    
+
     assert!(rooms.is_ok());
 
     let user_rooms = api.get_user_rooms(&user.id);
@@ -104,7 +104,7 @@ fn api_get_messages_with_pagination() {
         limit: 50,
         after_id: None,
         before_id: None,
-        query: None 
+        query: None
         };
     let messages = api.get_messages(&rooms[0].id, Some(pagination));
 
@@ -142,14 +142,14 @@ fn api_search_rooms() {
     let search_result = api.search_rooms(&room.name);
 
     assert!(search_result.is_ok());
-    assert!(search_result.unwrap().rooms.len() > 0);
+    assert!(!search_result.unwrap().rooms.is_empty());
 }
 
 #[test]
 fn api_get_groups() {
     let api = get_gitter_api();
     let groups = api.get_groups();
-    
+
     assert!(groups.is_ok());
 }
 
