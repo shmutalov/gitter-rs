@@ -168,7 +168,7 @@ fn api_get_unread_items() {
     let user = api.get_user().unwrap();
     let user_rooms = api.get_user_rooms(&user.id).unwrap();
 
-    let unread_items = api.get_unread_items(&user.id, &user_rooms[0].id).unwrap();
+    let unread_items = api.get_unread_items(&user.id, &user_rooms[0].id);
 
-
+    assert!(unread_items.is_ok());
 }
