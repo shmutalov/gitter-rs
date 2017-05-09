@@ -30,7 +30,7 @@ pub enum ApiError {
 type ApiResult<T> = Result<T, ApiError>;
 
 impl<'a> Gitter<'a> {
-    // New initializes the Gitter API client
+    /// New initializes the Gitter API client
     pub fn new<S>(token: S) -> Gitter<'a>
         where S: Into<Cow<'a, str>>
     {
@@ -44,7 +44,7 @@ impl<'a> Gitter<'a> {
         }
     }
 
-    // Returns the current user
+    /// Returns the current user
     pub fn get_user(&self) -> ApiResult<User> {
         let full_url = self.api_base_url.to_string() + "user";
         match self.get::<&str, Vec<User>>(&full_url) {
@@ -59,7 +59,7 @@ impl<'a> Gitter<'a> {
         }
     }
 
-    // Returns a list of Rooms the user is part of
+    /// Returns a list of Rooms the user is part of
     pub fn get_user_rooms<S>(&self, user_id: S) -> ApiResult<Vec<Room>>
         where S: AsRef<str>
     {
@@ -75,13 +75,13 @@ impl<'a> Gitter<'a> {
         self.get(&full_url)
     }
 
-    // Returns a list of rooms the current user is in
+    /// Returns a list of rooms the current user is in
     pub fn get_rooms(&self) -> ApiResult<Vec<Room>> {
         let full_url = self.api_base_url.to_string() + "rooms";
         self.get(&full_url)
     }
 
-    // Returns the users in the room with the passed id
+    /// Returns the users in the room with the passed id
     pub fn get_users_in_room<S>(&self, room_id: S) -> ApiResult<Vec<User>>
         where S: AsRef<str>
     {
@@ -89,7 +89,7 @@ impl<'a> Gitter<'a> {
         self.get(&full_url)
     }
 
-    // Returns a room with the passed id
+    /// Returns a room with the passed id
     pub fn get_room<S>(&self, room_id: S) -> ApiResult<Room>
         where S: AsRef<str>
     {
@@ -97,8 +97,8 @@ impl<'a> Gitter<'a> {
         self.get(&full_url)
     }
 
-    // Returns a list of messages in a room.
-    // Pagination is optional. You can pass nil or specific pagination params.
+    /// Returns a list of messages in a room.
+    /// Pagination is optional. You can pass nil or specific pagination params.
     pub fn get_messages<S>(&self, room_id: S, params: Option<Pagination>) -> ApiResult<Vec<Message>>
         where S: AsRef<str>
     {
@@ -113,7 +113,7 @@ impl<'a> Gitter<'a> {
         self.get(&full_url)
     }
 
-    // Returns a message in a room.
+    /// Returns a message in a room.
     pub fn get_message<S>(&self, room_id: S, message_id: S) -> ApiResult<Message>
         where S: AsRef<str>
     {
@@ -123,7 +123,7 @@ impl<'a> Gitter<'a> {
         self.get(&full_url)
     }
 
-    // Sends a message to a room
+    /// Sends a message to a room
     pub fn send_message<S>(&self, room_id: S, text: S) -> ApiResult<()>
         where S: AsRef<str>
     {
@@ -133,7 +133,7 @@ impl<'a> Gitter<'a> {
         self.post(&full_url, &msg)
     }
 
-    // Update a message
+    /// Update a message
     pub fn update_message<S>(&self, room_id: S, msg_id: S, text: S) -> ApiResult<()>
         where S: AsRef<str>
     {
@@ -143,7 +143,7 @@ impl<'a> Gitter<'a> {
         self.put(&full_url, &msg)
     }
 
-    // Joins a room
+    /// Joins a room
     pub fn join_room<S>(&self, room_id: S, user_id: S) -> ApiResult<Room>
         where S: AsRef<str>
     {
@@ -193,7 +193,7 @@ impl<'a> Gitter<'a> {
         self.post(&full_url, &room)
     }
 
-    // Removes a user from the room
+    /// Removes a user from the room
     pub fn leave_room<S>(&self, room_id: S, user_id: S) -> ApiResult<()>
         where S: AsRef<str>
     {
@@ -203,7 +203,7 @@ impl<'a> Gitter<'a> {
         self.delete(&full_url)
     }
 
-    // Delete a room
+    /// Delete a room
     pub fn delete_room<S>(&self, room_id: S) -> ApiResult<()>
         where S: AsRef<str>
     {
@@ -212,7 +212,7 @@ impl<'a> Gitter<'a> {
         self.delete(&full_url)
     }
 
-    // Queries the Rooms resources of gitter API
+    /// Queries the Rooms resources of gitter API
     pub fn search_rooms<S>(&self, room: S) -> ApiResult<SearchResult>
         where S: AsRef<str>
     {
@@ -223,7 +223,7 @@ impl<'a> Gitter<'a> {
         self.get(&full_url)
     }
 
-    // Returns the room ID of a given URI
+    /// Returns the room ID of a given URI
     pub fn get_room_id<S>(&self, uri: S) -> ApiResult<String>
         where S: AsRef<str>
     {
@@ -235,7 +235,7 @@ impl<'a> Gitter<'a> {
             .ok_or(ApiError::RoomNotFound)
     }
 
-    // Returns a list of groups the current user is in
+    /// Returns a list of groups the current user is in
     pub fn get_groups(&self) -> ApiResult<Vec<Group>> {
         let full_url = self.api_base_url.to_string() + "groups";
         self.get(&full_url)
@@ -249,7 +249,7 @@ impl<'a> Gitter<'a> {
         self.get(&full_url)
     }
 
-    // create default headers
+    /// create default headers
     fn default_headers(&self) -> Headers {
         let mut headers = Headers::new();
 
@@ -260,7 +260,7 @@ impl<'a> Gitter<'a> {
         headers
     }
 
-    // Returns raw data in bytes from specified url
+    /// Returns raw data in bytes from specified url
     fn get<S, T>(&self, url: S) -> ApiResult<T>
         where S: IntoUrl,
               T: Deserialize
@@ -271,7 +271,7 @@ impl<'a> Gitter<'a> {
         }
     }
 
-    // Posts raw body data to specified url and returns response raw data
+    /// Posts raw body data to specified url and returns response raw data
     fn post<S, B, T>(&self, url: S, body: B) -> ApiResult<T>
         where S: IntoUrl,
               B: Serialize,
@@ -283,7 +283,7 @@ impl<'a> Gitter<'a> {
         }
     }
 
-    // Puts raw body data to specified url and returns response raw data
+    /// Puts raw body data to specified url and returns response raw data
     fn put<S, B, T>(&self, url: S, body: B) -> ApiResult<T>
         where S: IntoUrl,
               B: Serialize,
@@ -295,7 +295,7 @@ impl<'a> Gitter<'a> {
         }
     }
 
-    // Deletes resource by specified url
+    /// Deletes resource by specified url
     fn delete<S, T>(&self, url: S) -> ApiResult<T>
         where S: IntoUrl,
               T: Deserialize
@@ -307,21 +307,21 @@ impl<'a> Gitter<'a> {
     }
 }
 
-// Pagination params
+/// Pagination params
 pub struct Pagination<'a> {
-    // Skip n messages
+    /// Skip n messages
     pub skip: i32,
 
-    // Get messages before beforeId
+    /// Get messages before beforeId
     pub before_id: Option<Cow<'a, str>>,
 
-    // Get messages after afterId
+    /// Get messages after afterId
     pub after_id: Option<Cow<'a, str>>,
 
-    // Maximum number of messages to return
+    /// Maximum number of messages to return
     pub limit: i32,
 
-    // Search query
+    /// Search query
     #[allow(dead_code)]
     pub query: Option<Cow<'a, str>>,
 }
