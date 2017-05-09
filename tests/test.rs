@@ -177,14 +177,18 @@ fn api_get_unread_items() {
 fn api_get_user_organizations() {
     let api = get_gitter_api();
     let user = api.get_user().unwrap();
-    let user_orgs = api.get_user_organizations(&user.id).unwrap();
+    let user_orgs = api.get_user_organizations(&user.id);
+
+    assert!(user_orgs.is_ok());
 }
 
 #[test]
 fn api_get_user_repositories() {
     let api = get_gitter_api();
     let user = api.get_user().unwrap();
-    let user_repos = api.get_user_repositories(&user.id).unwrap();
+    let user_repos = api.get_user_repositories(&user.id);
+
+    assert!(user_repos.is_ok());
 }
 
 #[test]
@@ -192,5 +196,7 @@ fn api_get_user_repositories() {
 fn api_get_user_channels() {
     let api = get_gitter_api();
     let user = api.get_user().unwrap();
-    let user_repos = api.get_user_channels(&user.id).unwrap();
+    let user_channels = api.get_user_channels(&user.id);
+
+    assert!(user_channels.is_ok());
 }
