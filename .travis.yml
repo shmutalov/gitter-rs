@@ -1,23 +1,24 @@
 language: rust
 
 os:
-    - linux
-    - osx
-    
+- linux
+- osx
+
 env:
-  - secure: "ehx53TBENShibDvpFIB+9lRMrvrBOgK66uZHwDIlIk+XbOk27v/gd1JdDF/CgxPXFQrlemEsWGr5M0octGKh8LrEmctpjigS+b6RZDGOaj4VAi9Ky1Gu31LxH8IVYqKGQ7HPrdzitKCeKQdSdCJjbrTeba8i1jmKECZ2gJS70tJwGgPdVeVddqF3K4ORIphtVYmf2oB2KtFQBt/+SKtxaaVhFPP6pwVTWuKxd+c+r7jR5WFbRBArd15ZFaydRRyMRxaeezqMoUNMoxYCA1h/OpA48M8iPRZ/qxrmT5TCor+5bH9XOyeFbjldYAHWIhW0rDMWApdrEqjranaMszubszpSNwlJu/sLAWEuIPTg2mZMF2L7f6+tqCPk1p7etCPqQkM9a9bocQpBF0BAlpKnyKe72lfx8c61ifmj4zbMPj9AKcSTKReSYAnqfDarcoAPxjiAyXDgPaPikH0I/m+ui+Trv6/EewuSHIgI7Jwy+PO3jxiPixn2O7ceTGQ7D+QNWzomrEm4GMEpMV0IsOWTywOTV5jdEWGOzi102tMDZZ/WvnKjpyfJgaq5g/dcD3zpsZX8WCZvxJMPNATgk3YI216KTDQApv2ayabF5cAJ6CQ6FxHGPwOkuzpXL5Byh+1f0A//1XCF7VvB0cbg4sbGnnQNLoCsa6B/wbktRySB0oY="
+  global:
+    secure: uvkb+H3UozoaxhNVygf/spMqB1LlFY5dwhvZH54bxeV0is/71C7NoENUjkgVzfRxnPnTblwNnaTL02USr2NLMFayFwpzpeOAzJ2pbRQ6YmnsaiLCh+I+Rk/m831mBfHFyEJ0fvmyqj8Mh2Kz1aq8UG62IsSxzbqI9mdhfLnWSj/0+bcIZ108YQpxR8G4CzUPcgeFw1eJF2icZ3Bhn25L6Kb2dQcYMIiw5X+L3OKbDESSzolDUkUwxCpmGUdE/+ROTYESY7n4ehCUih4667WSvIZxbF58lh+PGI8tqA3vtPlw3LswjZI6YM+P0y41A1KmF8JvfBA0yAuDxBI5Y/3/FQqazxfTpDDWtN2ZgBp5jGzk0kwdEAyoZrkE/T5SWx9b/bLQ1rW+3xjtiDh3+9BZ1BYYpZrM9rI3PD3I9prxyZskwFxf3RBImi50JK8YrNTAtpKTT/a7CTzIP9ktzTBfnZDAa1WBm2E85/7AM599zbDfAe+kR67yksYiKJvdxM6LCh5zFl5dtVYphbO2A/czxAO7GpwK+tkh2U/kZvrhHsLP+abMMt3hXtl7x7EkedttLsF/WB2nNRnr6yr7BEJWByPkflzxuJFPMTTLywfl9V70m+SDNzHQZ59a6dn2nbk8sWzsgZU5GbymmQGtR7JGZUo39FCyqQS9ygRw32jGXv0=
 
 cache: cargo
 
 matrix:
-    allow_failures:
-        - rust: nightly
-    
+  allow_failures:
+  - rust: nightly
+
 rust:
-  - stable
-  - beta
-  - nightly
+- stable
+- beta
+- nightly
 
 script:
-  - cargo build --verbose
-  - cargo test --verbose
+- cargo build --verbose
+- cargo test --verbose
