@@ -127,6 +127,16 @@ impl<'a> Gitter<'a> {
         self.post(&full_url, &msg)
     }
 
+    // Update a message
+    pub fn update_message<S>(&self, room_id: S, msg_id: S, text: S) -> ApiResult<()>
+        where S: Into<String>
+    {
+        let full_url = self.api_base_url.to_string() + "rooms/" + &room_id.into() + "/chatMessages/" + &msg_id.into();
+        let msg = OutMessage { text: text.into() };
+
+        self.put(&full_url, &msg)
+    }
+
     // Joins a room
     pub fn join_room<S>(&self, room_id: S, user_id: S) -> ApiResult<Room>
         where S: Into<String>
@@ -255,13 +265,25 @@ impl<'a> Gitter<'a> {
         }
     }
 
-    // Sends raw body data to specified url and returns response raw data
+    // Posts raw body data to specified url and returns response raw data
     fn post<S, B, T>(&self, url: S, body: B) -> ApiResult<T>
         where S: IntoUrl,
               B: Serialize,
               T: Deserialize
     {
         match self.client.post(url).json(&body).send() {
+            Ok(mut response) => response.json::<T>().map_err(|e| ApiError::Unknown(e.to_string())),
+            Err(e) => Err(ApiError::BadRequest(e.to_string())),
+        }
+    }
+
+    // Puts raw body data to specified url and returns response raw data
+    fn put<S, B, T>(&self, url: S, body: B) -> ApiResult<T>
+        where S: IntoUrl,
+              B: Serialize,
+              T: Deserialize
+    {
+        match self.client.put(url).json(&body).send() {
             Ok(mut response) => response.json::<T>().map_err(|e| ApiError::Unknown(e.to_string())),
             Err(e) => Err(ApiError::BadRequest(e.to_string())),
         }
