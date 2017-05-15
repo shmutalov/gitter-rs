@@ -3,9 +3,12 @@ name = "gitter"
 version = "0.1.0"
 authors = ["shmutalov <shmutalov@gmail.com>"]
 
+homepage = "https://github.com/shmutalov/gitter-rs"
+repository = "https://github.com/shmutalov/gitter-rs"
+
 description = "A library that provides Gitter API"
 readme = "README.md"
-license = "MIT"
+license = "MIT/Apache-2.0"
 keywords = ["gitter", "api", "chat"]
 
 [dependencies]
