@@ -117,6 +117,7 @@ fn api_get_message() {
 
     let rooms = api.get_rooms().unwrap();
     let messages = api.get_messages(&rooms[0].id, None).unwrap();
+    
     let message = api.get_message(&rooms[0].id, &messages[0].id);
 
     assert!(message.is_ok());
@@ -199,4 +200,14 @@ fn api_get_user_channels() {
     let user_channels = api.get_user_channels(&user.id);
 
     assert!(user_channels.is_ok());
+}
+
+#[test]
+#[ignore]
+fn api_send_message() {
+    let api = get_gitter_api();
+    let room_id = api.get_room_id("gitter-rs/testing").unwrap();
+
+    let result = api.send_message(&room_id, "@shmutalov this is a `test` message.\n\n```rust\nfn main() {}```").unwrap();
+    // assert!(result.is_ok());
 }

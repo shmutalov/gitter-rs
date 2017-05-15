@@ -20,7 +20,7 @@ const API_BASE_URL: &str = "https://api.gitter.im/v1/";
 #[derive(Debug)]
 pub enum ApiError {
     EmptyResponse,
-    BadResponse,
+    BadResponse(String),
     BadRequest(String),
     RoomNotFound,
     UserNotFound,
@@ -68,16 +68,18 @@ impl<'a> Gitter<'a> {
     }
 
     /// Receive user's unread items and mentions in the room 
-    pub fn get_unread_items<S>(&self, user_id: S, room_id: S) -> ApiResult<UnreadItems> 
-        where S: AsRef<str>
+    pub fn get_unread_items<U, R>(&self, user_id: U, room_id: R) -> ApiResult<UnreadItems> 
+        where U: AsRef<str>,
+              R: AsRef<str>
     {
         let full_url = self.api_base_url.to_string() + "user/" + user_id.as_ref() + "/rooms" + room_id.as_ref() + "/unreadItems";
         self.get(&full_url)
     }
 
     /// Mark user's given room messages as read
-    pub fn mark_messages_as_read<S>(&self, user_id: S, room_id: S, message_ids: &Vec<String>) -> ApiResult<()> 
-        where S: AsRef<str>
+    pub fn mark_messages_as_read<U, R>(&self, user_id: U, room_id: R, message_ids: &Vec<String>) -> ApiResult<()> 
+        where U: AsRef<str>,
+              R: AsRef<str>
     {
         let full_url = self.api_base_url.to_string() + "user/" + user_id.as_ref() + "/rooms" + room_id.as_ref() + "/unreadItems";
         let unread_items = UnreadItems::from_msg_ids(message_ids);
@@ -147,8 +149,9 @@ impl<'a> Gitter<'a> {
     }
 
     /// Returns a message in a room.
-    pub fn get_message<S>(&self, room_id: S, message_id: S) -> ApiResult<Message>
-        where S: AsRef<str>
+    pub fn get_message<R, M>(&self, room_id: R, message_id: M) -> ApiResult<Message>
+        where R: AsRef<str>,
+              M: AsRef<str>
     {
         let full_url = self.api_base_url.to_string() + "rooms/" + room_id.as_ref() +
                        "/chatMessages/" + message_id.as_ref();
@@ -157,8 +160,9 @@ impl<'a> Gitter<'a> {
     }
 
     /// Sends a message to a room
-    pub fn send_message<S>(&self, room_id: S, text: S) -> ApiResult<()>
-        where S: AsRef<str>
+    pub fn send_message<R, T>(&self, room_id: R, text: T) -> ApiResult<()>
+        where R: AsRef<str>,
+              T: AsRef<str>
     {
         let full_url = self.api_base_url.to_string() + "rooms/" + room_id.as_ref() + "/chatMessages";
         let msg = OutMessage { text: text.as_ref().to_string() };
@@ -167,8 +171,10 @@ impl<'a> Gitter<'a> {
     }
 
     /// Update a message
-    pub fn update_message<S>(&self, room_id: S, msg_id: S, text: S) -> ApiResult<()>
-        where S: AsRef<str>
+    pub fn update_message<R, M, T>(&self, room_id: R, msg_id: M, text: T) -> ApiResult<()>
+        where R: AsRef<str>,
+              M: AsRef<str>,
+              T: AsRef<str>
     {
         let full_url = self.api_base_url.to_string() + "rooms/" + room_id.as_ref() + "/chatMessages/" + msg_id.as_ref();
         let msg = OutMessage { text: text.as_ref().to_string() };
@@ -177,8 +183,9 @@ impl<'a> Gitter<'a> {
     }
 
     /// Joins a room
-    pub fn join_room<S>(&self, room_id: S, user_id: S) -> ApiResult<Room>
-        where S: AsRef<str>
+    pub fn join_room<R, U>(&self, room_id: R, user_id: U) -> ApiResult<Room>
+        where R: AsRef<str>,
+              U: AsRef<str>
     {
         let full_url = self.api_base_url.to_string() + "user/" + user_id.as_ref() + "/rooms";
         let room = JoinRoom::from_id(room_id);
@@ -197,8 +204,9 @@ impl<'a> Gitter<'a> {
     }
 
     /// Update a room topic
-    pub fn update_room_topic<S>(&self, room_id: S, topic: S) -> ApiResult<Room>
-        where S: AsRef<str>
+    pub fn update_room_topic<R, T>(&self, room_id: R, topic: T) -> ApiResult<Room>
+        where R: AsRef<str>,
+              T: AsRef<str>
     {
         let full_url = self.api_base_url.to_string() + "/rooms" + room_id.as_ref();
         let room = UpdateRoom::from_topic(topic);
@@ -217,8 +225,9 @@ impl<'a> Gitter<'a> {
     }
 
     /// Update a room topic
-    pub fn update_room_tags<S>(&self, room_id: S, tags: S) -> ApiResult<Room>
-        where S: AsRef<str>
+    pub fn update_room_tags<R, T>(&self, room_id: R, tags: T) -> ApiResult<Room>
+        where R: AsRef<str>,
+              T: AsRef<str>
     {
         let full_url = self.api_base_url.to_string() + "/rooms" + room_id.as_ref();
         let room = UpdateRoom::from_tags(tags);
@@ -227,8 +236,9 @@ impl<'a> Gitter<'a> {
     }
 
     /// Removes a user from the room
-    pub fn leave_room<S>(&self, room_id: S, user_id: S) -> ApiResult<()>
-        where S: AsRef<str>
+    pub fn leave_room<R, U>(&self, room_id: R, user_id: U) -> ApiResult<()>
+        where R: AsRef<str>,
+              U: AsRef<str>
     {
         let full_url = self.api_base_url.to_string() + "rooms/" + room_id.as_ref() + "/users/" +
                        user_id.as_ref();
@@ -296,10 +306,10 @@ impl<'a> Gitter<'a> {
     /// Returns raw data in bytes from specified url
     fn get<S, T>(&self, url: S) -> ApiResult<T>
         where S: IntoUrl,
-              T: Deserialize
+              for<'de> T: Deserialize<'de>
     {
         match self.client.get(url).headers(self.default_headers()).send() {
-            Ok(mut response) => response.json::<T>().map_err(|e| ApiError::Unknown(e.to_string())),
+            Ok(mut response) => response.json::<T>().map_err(|e| ApiError::BadResponse(e.to_string())),
             Err(e) => Err(ApiError::BadRequest(e.to_string())),
         }
     }
@@ -308,10 +318,10 @@ impl<'a> Gitter<'a> {
     fn post<S, B, T>(&self, url: S, body: B) -> ApiResult<T>
         where S: IntoUrl,
               B: Serialize,
-              T: Deserialize
+              for<'de> T: Deserialize<'de>
     {
         match self.client.post(url).json(&body).send() {
-            Ok(mut response) => response.json::<T>().map_err(|e| ApiError::Unknown(e.to_string())),
+            Ok(mut response) => response.json::<T>().map_err(|e| ApiError::BadResponse(e.to_string())),
             Err(e) => Err(ApiError::BadRequest(e.to_string())),
         }
     }
@@ -320,10 +330,10 @@ impl<'a> Gitter<'a> {
     fn put<S, B, T>(&self, url: S, body: B) -> ApiResult<T>
         where S: IntoUrl,
               B: Serialize,
-              T: Deserialize
+              for<'de> T: Deserialize<'de>
     {
         match self.client.put(url).json(&body).send() {
-            Ok(mut response) => response.json::<T>().map_err(|e| ApiError::Unknown(e.to_string())),
+            Ok(mut response) => response.json::<T>().map_err(|e| ApiError::BadResponse(e.to_string())),
             Err(e) => Err(ApiError::BadRequest(e.to_string())),
         }
     }
@@ -331,10 +341,10 @@ impl<'a> Gitter<'a> {
     /// Deletes resource by specified url
     fn delete<S, T>(&self, url: S) -> ApiResult<T>
         where S: IntoUrl,
-              T: Deserialize
+              for<'de> T: Deserialize<'de>
     {
         match self.client.delete(url).send() {
-            Ok(mut response) => response.json::<T>().map_err(|e| ApiError::Unknown(e.to_string())),
+            Ok(mut response) => response.json::<T>().map_err(|e| ApiError::BadResponse(e.to_string())),
             Err(e) => Err(ApiError::BadRequest(e.to_string())),
         }
     }
