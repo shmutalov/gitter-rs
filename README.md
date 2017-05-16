@@ -3,6 +3,7 @@
 [![license](https://img.shields.io/badge/license-MIT_or_Apache_2.0-blue.svg "License")](#license)
 [![](https://tokei.rs/b1/github/shmutalov/gitter-rs)](https://github.com/shmutalov/gitter-rs)
 [![](https://travis-ci.org/shmutalov/gitter-rs.svg?branch=master)](https://travis-ci.org/shmutalov/gitter-rs)
+[![gitter-rs on crates.io](https://img.shields.io/crates/v/gitter.svg)](https://crates.io/crates/gitter)
 [![Join the chat at https://gitter.im/gitter-rs/general](https://badges.gitter.im/gitter-rs/general.svg)](https://gitter.im/gitter-rs/general?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 Gitter API in Rust 
@@ -18,6 +19,13 @@ cargo build
 
 # Install
 
+### Current version
+```toml
+[dependencies]
+gitter = "0.1.0"
+```
+
+### Development version
 ```toml
 [dependencies]
 gitter = { git = "https://github.com/shmutalov/gitter-rs" }
