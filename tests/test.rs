@@ -26,6 +26,15 @@ fn deserialize_user() {
 }
 
 #[test]
+fn serialize_out_message() {
+    let out_msg = OutMessage{text: "test `message` from @shmutalov".to_string()};
+    let out_msg_expected = "{\"text\":\"test `message` from @shmutalov\"}";
+    let out_msg_json = serde_json::to_string(&out_msg).unwrap();
+
+    assert_eq!(&out_msg_expected, &out_msg_json);
+}
+
+#[test]
 fn api_init() {
     Gitter::new("asbcasadasd");
 }
@@ -208,6 +217,7 @@ fn api_send_message() {
     let api = get_gitter_api();
     let room_id = api.get_room_id("gitter-rs/testing").unwrap();
 
-    let result = api.send_message(&room_id, "@shmutalov this is a `test` message.\n\n```rust\nfn main() {}```").unwrap();
+    let msg = "@shmutalov this is a `test` message.\n\n```rust\nfn main() {}```";
+    let result = api.send_message(&room_id, &msg).unwrap();
     // assert!(result.is_ok());
 }

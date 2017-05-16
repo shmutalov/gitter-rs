@@ -160,7 +160,7 @@ impl<'a> Gitter<'a> {
     }
 
     /// Sends a message to a room
-    pub fn send_message<R, T>(&self, room_id: R, text: T) -> ApiResult<()>
+    pub fn send_message<R, T>(&self, room_id: R, text: T) -> ApiResult<Message>
         where R: AsRef<str>,
               T: AsRef<str>
     {
