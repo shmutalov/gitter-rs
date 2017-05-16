@@ -35,6 +35,7 @@ gitter = { git = "https://github.com/shmutalov/gitter-rs" }
 - [Users](#users)
 - [Rooms](#rooms)
 - [Messages](#messages)
+- [Documentation](docs.rs/gitter)
 - [Roadmap](#roadmap)
 - [License](#license)
 
@@ -48,6 +49,8 @@ use gitter::Gitter;
 
 let api = Gitter::new("YOUR_ACCESS_TOKEN");
 ```
+
+_Following code snippets did not updated yet_
 
 # Users
 
@@ -101,7 +104,7 @@ api.send_message("roomID", "free chat text").unwrap();
 This project is a work in progress.
 
 - [x] Implement base Rest API's and add some tests
-- [ ] Test `send_message` method
+- [x] Test `send_message` method
 - [x] Implement all Rest API methods
 - [ ] Add support for Streaming API
 - [ ] Add support for Faye [_Optional_]
