@@ -35,7 +35,7 @@ gitter = { git = "https://github.com/shmutalov/gitter-rs" }
 - [Users](#users)
 - [Rooms](#rooms)
 - [Messages](#messages)
-- [Documentation](docs.rs/gitter)
+- [Documentation](http://docs.rs/gitter)
 - [Roadmap](#roadmap)
 - [License](#license)
 
