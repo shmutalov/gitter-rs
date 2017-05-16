@@ -299,7 +299,7 @@ impl<'a> Gitter<'a> {
         headers.set(ContentType::json());
         headers.set(Accept::json());
         headers.set(Authorization(Bearer { token: self.token.to_string() }));
-
+        
         headers
     }
 
@@ -320,7 +320,7 @@ impl<'a> Gitter<'a> {
               B: Serialize,
               for<'de> T: Deserialize<'de>
     {
-        match self.client.post(url).json(&body).send() {
+        match self.client.post(url).headers(self.default_headers()).json(&body).send() {
             Ok(mut response) => response.json::<T>().map_err(|e| ApiError::BadResponse(e.to_string())),
             Err(e) => Err(ApiError::BadRequest(e.to_string())),
         }
@@ -332,7 +332,7 @@ impl<'a> Gitter<'a> {
               B: Serialize,
               for<'de> T: Deserialize<'de>
     {
-        match self.client.put(url).json(&body).send() {
+        match self.client.put(url).headers(self.default_headers()).json(&body).send() {
             Ok(mut response) => response.json::<T>().map_err(|e| ApiError::BadResponse(e.to_string())),
             Err(e) => Err(ApiError::BadRequest(e.to_string())),
         }
@@ -343,7 +343,7 @@ impl<'a> Gitter<'a> {
         where S: IntoUrl,
               for<'de> T: Deserialize<'de>
     {
-        match self.client.delete(url).send() {
+        match self.client.delete(url).headers(self.default_headers()).send() {
             Ok(mut response) => response.json::<T>().map_err(|e| ApiError::BadResponse(e.to_string())),
             Err(e) => Err(ApiError::BadRequest(e.to_string())),
         }

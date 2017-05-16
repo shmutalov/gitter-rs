@@ -169,7 +169,6 @@ pub struct User {
     pub id: String,
 
     /// Gitter/GitHub username
-    #[serde(rename = "username")]
     pub username: String,
 
     /// Gitter/GitHub user real name
@@ -179,13 +178,21 @@ pub struct User {
     /// Path to the user on Gitter
     pub url: String,
 
+    /// User avatar URI
+    #[serde(rename = "avatarUrl")]
+    pub avatar_url: Option<String>,
+
     /// User avatar URI (small)
     #[serde(rename = "avatarUrlSmall")]
-    pub avatar_url_small: String,
+    pub avatar_url_small: Option<String>,
 
     /// User avatar URI (medium)
     #[serde(rename = "avatarUrlMedium")]
-    pub avatar_url_medium: String,
+    pub avatar_url_medium: Option<String>,
+
+    /// Version
+    #[serde(rename = "v")]
+    pub version: Option<i32>,
 }
 
 #[derive(Deserialize, Debug)]
@@ -228,7 +235,7 @@ pub struct Message {
 
     /// Version
     #[serde(rename = "v")]
-    pub version: i32,
+    pub version: Option<i32>,
 }
 
 /// Send message request model
@@ -246,8 +253,14 @@ pub struct Mention {
     pub screen_name: String,
 
     /// Gitter User ID
-    #[serde(rename = "userID")]
+    #[serde(rename = "userId")]
     pub user_id: String,
+
+    /// Announcement 
+    pub announcement: Option<bool>,
+
+    /// To all group
+    pub group: Option<bool>,
 }
 
 /// Issue references issue in the message

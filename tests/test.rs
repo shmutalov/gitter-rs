@@ -212,12 +212,11 @@ fn api_get_user_channels() {
 }
 
 #[test]
-#[ignore]
 fn api_send_message() {
     let api = get_gitter_api();
     let room_id = api.get_room_id("gitter-rs/testing").unwrap();
 
     let msg = "@shmutalov this is a `test` message.\n\n```rust\nfn main() {}```";
     let result = api.send_message(&room_id, &msg).unwrap();
-    // assert!(result.is_ok());
+    assert_eq!(&result.text, &msg);
 }
