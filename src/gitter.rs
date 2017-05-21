@@ -197,7 +197,7 @@ impl<'a> Gitter<'a> {
     pub fn join_room_by_uri<S>(&self, uri: S) -> ApiResult<Room>
         where S: AsRef<str>
     {
-        let full_url = self.api_base_url.to_string() + "/rooms";
+        let full_url = self.api_base_url.to_string() + "rooms";
         let room = JoinRoom::from_uri(uri);
 
         self.post(&full_url, &room)
@@ -208,7 +208,7 @@ impl<'a> Gitter<'a> {
         where R: AsRef<str>,
               T: AsRef<str>
     {
-        let full_url = self.api_base_url.to_string() + "/rooms" + room_id.as_ref();
+        let full_url = self.api_base_url.to_string() + "rooms/" + room_id.as_ref();
         let room = UpdateRoom::from_topic(topic);
 
         self.post(&full_url, &room)
@@ -218,7 +218,7 @@ impl<'a> Gitter<'a> {
     pub fn update_room_noindex<S>(&self, room_id: S, noindex: bool) -> ApiResult<Room>
         where S: AsRef<str>
     {
-        let full_url = self.api_base_url.to_string() + "/rooms" + room_id.as_ref();
+        let full_url = self.api_base_url.to_string() + "rooms/" + room_id.as_ref();
         let room = UpdateRoom::from_noindex(noindex.into());
 
         self.post(&full_url, &room)
@@ -229,7 +229,7 @@ impl<'a> Gitter<'a> {
         where R: AsRef<str>,
               T: AsRef<str>
     {
-        let full_url = self.api_base_url.to_string() + "/rooms" + room_id.as_ref();
+        let full_url = self.api_base_url.to_string() + "rooms/" + room_id.as_ref();
         let room = UpdateRoom::from_tags(tags);
 
         self.post(&full_url, &room)
