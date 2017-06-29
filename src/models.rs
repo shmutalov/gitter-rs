@@ -1,4 +1,4 @@
-use chrono::{DateTime, UTC};
+use chrono::{DateTime, Utc};
 
 #[derive(Deserialize, Debug)]
 #[serde(rename_all = "SCREAMING_SNAKE_CASE")]
@@ -53,7 +53,7 @@ pub struct Room {
 
     /// Last time the current user accessed the room in ISO format
     #[serde(rename = "lastAccessTime")]
-    pub last_access_time: Option<DateTime<UTC>>,
+    pub last_access_time: Option<DateTime<Utc>>,
 
     /// Indicates if the current user has disabled notifications
     pub lurk: bool,
@@ -207,11 +207,11 @@ pub struct Message {
     pub html: String,
 
     /// ISO formatted date of the message
-    pub sent: DateTime<UTC>,
+    pub sent: DateTime<Utc>,
 
     /// ISO formatted date of the message if edited
     #[serde(rename = "editedAt")]
-    pub edited_at: Option<DateTime<UTC>>,
+    pub edited_at: Option<DateTime<Utc>>,
 
     /// User that sent the message
     #[serde(rename = "fromUser")]
@@ -408,7 +408,7 @@ pub struct Channel {
 
     /// Last access date and time
     #[serde(rename = "lastAccessTime")]
-    pub last_access_time: Option<DateTime<UTC>>,
+    pub last_access_time: Option<DateTime<Utc>>,
 
     pub lurk: bool,
 
