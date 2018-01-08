@@ -22,7 +22,7 @@ cargo build
 ### Current version
 ```toml
 [dependencies]
-gitter = "0.1.3"
+gitter = "0.2.0"
 ```
 
 ### Development version

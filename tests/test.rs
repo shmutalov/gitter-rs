@@ -1,12 +1,12 @@
+extern crate gitter;
 extern crate serde;
 extern crate serde_json;
-extern crate gitter;
 
 use gitter::*;
 
 fn get_gitter_api<'a>() -> Gitter<'a> {
     let token = std::env::var("GITTER_BOT_TOKEN").unwrap();
-    Gitter::new(token)
+    Gitter::new(token).unwrap()
 }
 
 #[test]
@@ -27,7 +27,9 @@ fn deserialize_user() {
 
 #[test]
 fn serialize_out_message() {
-    let out_msg = OutMessage{text: "test `message` from @shmutalov".to_string()};
+    let out_msg = OutMessage {
+        text: "test `message` from @shmutalov".to_string(),
+    };
     let out_msg_expected = "{\"text\":\"test `message` from @shmutalov\"}";
     let out_msg_json = serde_json::to_string(&out_msg).unwrap();
 
@@ -36,7 +38,7 @@ fn serialize_out_message() {
 
 #[test]
 fn api_init() {
-    Gitter::new("asbcasadasd");
+    Gitter::new("asbcasadasd").unwrap();
 }
 
 #[test]
@@ -108,13 +110,13 @@ fn api_get_messages_with_pagination() {
     let api = get_gitter_api();
 
     let rooms = api.get_rooms().unwrap();
-    let pagination = Pagination{
+    let pagination = Pagination {
         skip: 1,
         limit: 50,
         after_id: None,
         before_id: None,
-        query: None
-        };
+        query: None,
+    };
     let messages = api.get_messages(&rooms[0].id, Some(pagination));
 
     assert!(messages.is_ok());
@@ -126,7 +128,7 @@ fn api_get_message() {
 
     let rooms = api.get_rooms().unwrap();
     let messages = api.get_messages(&rooms[0].id, None).unwrap();
-    
+
     let message = api.get_message(&rooms[0].id, &messages[0].id);
 
     assert!(message.is_ok());
