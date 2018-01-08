@@ -47,7 +47,7 @@ use gitter::Gitter;
 
 ...
 
-let api = Gitter::new("YOUR_ACCESS_TOKEN");
+let api = Gitter::new("YOUR_ACCESS_TOKEN").unwrap();
 ```
 
 _Following code snippets did not updated yet_
