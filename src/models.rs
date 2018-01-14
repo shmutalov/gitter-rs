@@ -240,9 +240,9 @@ pub struct Message {
 
 /// Send message request model
 #[derive(Serialize, Debug)]
-pub struct OutMessage {
+pub struct OutMessage<'a> {
     /// Original message in plain-text/markdown
-    pub text: String,
+    pub text: &'a str,
 }
 
 /// Mention holds data about mentioned user in the message
