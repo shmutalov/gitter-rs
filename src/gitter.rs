@@ -39,7 +39,7 @@ impl<'a> Gitter<'a> {
             Ok(client) => Ok(Gitter {
                 token: token.into(),
                 api_base_url: API_BASE_URL.into(),
-                client: client,
+                client,
             }),
             Err(e) => Err(ApiError::Unknown(e.to_string())),
         }
@@ -84,7 +84,7 @@ impl<'a> Gitter<'a> {
         &self,
         user_id: U,
         room_id: R,
-        message_ids: &Vec<String>,
+        message_ids: &[String],
     ) -> ApiResult<()>
     where
         U: AsRef<str>,
@@ -242,7 +242,7 @@ impl<'a> Gitter<'a> {
         S: AsRef<str>,
     {
         let full_url = format!("{}/rooms/{}", self.api_base_url, room_id.as_ref());
-        let room = UpdateRoom::from_noindex(noindex.into());
+        let room = UpdateRoom::from_noindex(noindex);
 
         self.post(&full_url, &room)
     }

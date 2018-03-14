@@ -336,9 +336,9 @@ pub struct UnreadItems {
 }
 
 impl UnreadItems {
-    pub fn from_msg_ids(msg_ids: &Vec<String>) -> UnreadItems {
+    pub fn from_msg_ids(msg_ids: &[String]) -> UnreadItems {
         UnreadItems {
-            chat: Some(msg_ids.clone()),
+            chat: Some(msg_ids.to_owned()),
             mention: None,
         }
     }

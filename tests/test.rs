@@ -6,7 +6,7 @@ use gitter::*;
 
 fn get_gitter_api<'a>() -> Gitter<'a> {
     let token = std::env::var("GITTER_BOT_TOKEN")
-        .unwrap_or("GITTER_TOKEN_VALUE".into());
+        .unwrap_or_else(|_| "GITTER_TOKEN_VALUE".into());
     Gitter::new(token).unwrap()
 }
 
@@ -136,7 +136,7 @@ fn api_get_room_id() {
 
     let rooms = api.get_rooms().unwrap();
     let room = rooms.into_iter().find(|x| x.uri.is_some()).unwrap();
-    let room_id = api.get_room_id(room.uri.unwrap_or("".to_owned()));
+    let room_id = api.get_room_id(room.uri.unwrap_or_else(|| "".to_owned()));
 
     assert!(room_id.is_ok());
 }
