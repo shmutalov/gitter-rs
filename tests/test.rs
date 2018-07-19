@@ -5,8 +5,7 @@ extern crate serde_json;
 use gitter::*;
 
 fn get_gitter_api<'a>() -> Gitter<'a> {
-    let token = std::env::var("GITTER_BOT_TOKEN")
-        .unwrap_or_else(|_| "GITTER_TOKEN_VALUE".into());
+    let token = std::env::var("GITTER_BOT_TOKEN").unwrap_or_else(|_| "GITTER_TOKEN_VALUE".into());
     Gitter::new(token).unwrap()
 }
 
@@ -29,7 +28,7 @@ fn deserialize_user() {
 #[test]
 fn serialize_out_message() {
     let out_msg = OutMessage {
-        text: "test `message` from @shmutalov"
+        text: "test `message` from @shmutalov",
     };
     let out_msg_expected = "{\"text\":\"test `message` from @shmutalov\"}";
     let out_msg_json = serde_json::to_string(&out_msg).unwrap();

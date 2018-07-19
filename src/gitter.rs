@@ -75,7 +75,12 @@ impl<'a> Gitter<'a> {
         U: AsRef<str>,
         R: AsRef<str>,
     {
-        let full_url = format!("{}/user/{}/rooms/{}/unreadItems", self.api_base_url, user_id.as_ref(), room_id.as_ref());
+        let full_url = format!(
+            "{}/user/{}/rooms/{}/unreadItems",
+            self.api_base_url,
+            user_id.as_ref(),
+            room_id.as_ref()
+        );
         self.get(&full_url)
     }
 
@@ -90,7 +95,12 @@ impl<'a> Gitter<'a> {
         U: AsRef<str>,
         R: AsRef<str>,
     {
-        let full_url = format!("{}/user/{}/rooms/{}/unreadItems", self.api_base_url, user_id.as_ref(), room_id.as_ref());
+        let full_url = format!(
+            "{}/user/{}/rooms/{}/unreadItems",
+            self.api_base_url,
+            user_id.as_ref(),
+            room_id.as_ref()
+        );
         let unread_items = UnreadItems::from_msg_ids(message_ids);
         self.post(&full_url, &unread_items)
     }
@@ -152,7 +162,11 @@ impl<'a> Gitter<'a> {
     where
         S: AsRef<str>,
     {
-        let mut full_url = format!("{}/rooms/{}/chatMessages", self.api_base_url, room_id.as_ref());
+        let mut full_url = format!(
+            "{}/rooms/{}/chatMessages",
+            self.api_base_url,
+            room_id.as_ref()
+        );
 
         if let Some(p) = params {
             full_url.push_str("?");
@@ -168,7 +182,12 @@ impl<'a> Gitter<'a> {
         R: AsRef<str>,
         M: AsRef<str>,
     {
-        let full_url = format!("{}/rooms/{}/chatMessages/{}", self.api_base_url, room_id.as_ref(), message_id.as_ref());
+        let full_url = format!(
+            "{}/rooms/{}/chatMessages/{}",
+            self.api_base_url,
+            room_id.as_ref(),
+            message_id.as_ref()
+        );
         self.get(&full_url)
     }
 
@@ -178,9 +197,13 @@ impl<'a> Gitter<'a> {
         R: AsRef<str>,
         T: AsRef<str>,
     {
-        let full_url = format!("{}/rooms/{}/chatMessages", self.api_base_url, room_id.as_ref());
+        let full_url = format!(
+            "{}/rooms/{}/chatMessages",
+            self.api_base_url,
+            room_id.as_ref()
+        );
         let msg = OutMessage {
-            text: text.as_ref()
+            text: text.as_ref(),
         };
 
         self.post(&full_url, &msg)
@@ -193,9 +216,14 @@ impl<'a> Gitter<'a> {
         M: AsRef<str>,
         T: AsRef<str>,
     {
-        let full_url = format!("{}/rooms/{}/chatMessages/{}", self.api_base_url, room_id.as_ref(), msg_id.as_ref());
+        let full_url = format!(
+            "{}/rooms/{}/chatMessages/{}",
+            self.api_base_url,
+            room_id.as_ref(),
+            msg_id.as_ref()
+        );
         let msg = OutMessage {
-            text: text.as_ref()
+            text: text.as_ref(),
         };
 
         self.put(&full_url, &msg)
@@ -265,7 +293,12 @@ impl<'a> Gitter<'a> {
         R: AsRef<str>,
         U: AsRef<str>,
     {
-        let full_url = format!("{}/rooms/{}/users/{}", self.api_base_url, room_id.as_ref(), user_id.as_ref());
+        let full_url = format!(
+            "{}/rooms/{}/users/{}",
+            self.api_base_url,
+            room_id.as_ref(),
+            user_id.as_ref()
+        );
 
         self.delete(&full_url)
     }
@@ -286,7 +319,11 @@ impl<'a> Gitter<'a> {
         S: AsRef<str>,
     {
         let query = &[("q", room.as_ref())];
-        let full_url = format!("{}/rooms?{}", self.api_base_url, &serde_urlencoded::to_string(query).unwrap());
+        let full_url = format!(
+            "{}/rooms?{}",
+            self.api_base_url,
+            &serde_urlencoded::to_string(query).unwrap()
+        );
 
         self.get(&full_url)
     }

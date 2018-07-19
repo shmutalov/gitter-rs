@@ -9,13 +9,13 @@ pub enum GithubType {
     Repo,
     /// A one-to-one chat.
     #[serde(rename = "ONETOONE")]
-    OneToOne, 
+    OneToOne,
     /// A Gitter channel nested under a GitHub Organisation.
-    OrgChannel, 
+    OrgChannel,
     /// A Gitter channel nested under a GitHub Repository.
-    RepoChannel, 
+    RepoChannel,
     /// A Gitter channel nested under a GitHub User.
-    UserChannel, 
+    UserChannel,
 }
 
 /// A Room in Gitter can represent a GitHub Organization, a GitHub Repository,
@@ -95,8 +95,9 @@ pub struct JoinRoom {
 
 impl JoinRoom {
     /// Create join room request from room ID
-    pub fn from_id<S>(id: S) -> JoinRoom 
-        where S: AsRef<str>
+    pub fn from_id<S>(id: S) -> JoinRoom
+    where
+        S: AsRef<str>,
     {
         JoinRoom {
             id: Some(id.as_ref().to_string()),
@@ -105,8 +106,9 @@ impl JoinRoom {
     }
 
     /// Create join room request from URI
-    pub fn from_uri<S>(uri: S) -> JoinRoom 
-        where S: AsRef<str> 
+    pub fn from_uri<S>(uri: S) -> JoinRoom
+    where
+        S: AsRef<str>,
     {
         JoinRoom {
             id: None,
@@ -127,18 +129,19 @@ pub struct UpdateRoom {
 
     /// Tags that define the room
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub tags: Option<String>
+    pub tags: Option<String>,
 }
 
 impl UpdateRoom {
     /// Create update room request only with topic parameter
-    pub fn from_topic<S>(topic: S) -> UpdateRoom 
-        where S: AsRef<str>
+    pub fn from_topic<S>(topic: S) -> UpdateRoom
+    where
+        S: AsRef<str>,
     {
         UpdateRoom {
             topic: Some(topic.as_ref().to_string()),
             noindex: None,
-            tags: None
+            tags: None,
         }
     }
 
@@ -147,13 +150,14 @@ impl UpdateRoom {
         UpdateRoom {
             topic: None,
             noindex: Some(noindex),
-            tags: None
+            tags: None,
         }
     }
 
     /// Create update room request only with tags parameter
-    pub fn from_tags<S>(tags: S) -> UpdateRoom 
-        where S: AsRef<str>
+    pub fn from_tags<S>(tags: S) -> UpdateRoom
+    where
+        S: AsRef<str>,
     {
         UpdateRoom {
             topic: None,
@@ -256,7 +260,7 @@ pub struct Mention {
     #[serde(rename = "userId")]
     pub user_id: String,
 
-    /// Announcement 
+    /// Announcement
     pub announcement: Option<bool>,
 
     /// To all group
@@ -369,7 +373,7 @@ pub struct Repository {
 
     /// Repository name
     pub name: String,
-    
+
     /// Repository URI
     pub uri: String,
 
@@ -419,4 +423,3 @@ pub struct Channel {
 
     pub security: String,
 }
-
