@@ -3,6 +3,9 @@ extern crate serde;
 extern crate serde_json;
 
 use gitter::*;
+use std::sync::mpsc;
+use std::thread;
+use std::time::Duration;
 
 fn get_gitter_api<'a>() -> Gitter<'a> {
     let token = std::env::var("GITTER_BOT_TOKEN").unwrap_or_else(|_| "GITTER_TOKEN_VALUE".into());
@@ -216,4 +219,25 @@ fn api_send_message() {
     let msg = "@shmutalov this is a `test` message.\n\n```rust\nfn main() {}```";
     let result = api.send_message(&room_id, &msg).unwrap();
     assert_eq!(&result.text, &msg);
+}
+
+#[test]
+fn api_listen_chat_messages() {
+    let mut api = get_gitter_api();
+
+    let (tx, rx) = mpsc::channel();
+
+    println!("Spawning the thread...");
+    // thread::spawn(move || {
+    //     let room_id = api.get_room_id("gitter-rs/testing").unwrap();
+    //     api.listen_for_chat_messages(&room_id, rx, |m| {
+    //         println!("Received: {:?}", m.unwrap());
+    //     });
+    // });
+
+    println!("Wait for 3 seconds...");
+    thread::sleep(Duration::from_millis(3000));
+
+    println!("Sending a stop signal...");
+    tx.send(false).unwrap();
 }

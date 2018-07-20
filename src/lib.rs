@@ -7,6 +7,8 @@ extern crate serde;
 extern crate serde_json;
 extern crate serde_urlencoded;
 
+extern crate faye;
+
 pub mod gitter;
 pub mod models;
 
