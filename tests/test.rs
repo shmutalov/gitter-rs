@@ -1,7 +1,9 @@
+extern crate faye;
 extern crate gitter;
 extern crate serde;
 extern crate serde_json;
 
+use faye::*;
 use gitter::*;
 use std::sync::mpsc;
 use std::thread;
@@ -221,23 +223,59 @@ fn api_send_message() {
     assert_eq!(&result.text, &msg);
 }
 
+// #[test]
+// fn api_listen_chat_messages() {
+//     let mut api = get_gitter_api();
+
+//     let (tx, rx) = mpsc::channel();
+
+//     println!("Spawning the thread...");
+//     // thread::spawn(move || {
+//     //     let room_id = api.get_room_id("gitter-rs/testing").unwrap();
+//     //     api.listen_for_chat_messages(&room_id, rx, |m| {
+//     //         println!("Received: {:?}", m.unwrap());
+//     //     });
+//     // });
+
+//     println!("Wait for 3 seconds...");
+//     thread::sleep(Duration::from_millis(3000));
+
+//     println!("Sending a stop signal...");
+//     tx.send(false).unwrap();
+// }
+
+pub struct TestFayeHandler;
+impl MessageHandler for TestFayeHandler {
+    fn on_handshake(&self, msg: &faye::bayeux::Message) {
+        println!("HANDSHAKE: {:?}", msg);
+    }
+    fn on_connect(&self, msg: &faye::bayeux::Message) {
+        println!("CONNECT: {:?}", msg);
+    }
+    fn on_disconnect(&self, msg: &faye::bayeux::Message) {
+        println!("DISCONNECT: {:?}", msg);
+    }
+    fn on_error(&self, msg: &faye::bayeux::Message) {
+        println!("ERROR: {:?}", msg);
+    }
+    fn on_subscribe(&self, msg: &faye::bayeux::Message) {
+        println!("SUBSCRIBE: {:?}", msg);
+    }
+    fn on_unsubscribe(&self, msg: &faye::bayeux::Message) {
+        println!("UNSUBSCRIBE: {:?}", msg);
+    }
+    fn on_message(&self, msg: &faye::bayeux::Message) {
+        println!("MSG: {:?}", msg);
+    }
+}
+
 #[test]
-fn api_listen_chat_messages() {
+fn api_test_faye() {
     let mut api = get_gitter_api();
+    let room_id = api.get_room_id("gitter-rs/testing").unwrap();
 
-    let (tx, rx) = mpsc::channel();
+    let handler = TestFayeHandler {};
+    let subscriptions = vec![format!("/api/v1/rooms/{}/chatMessages", room_id)];
 
-    println!("Spawning the thread...");
-    // thread::spawn(move || {
-    //     let room_id = api.get_room_id("gitter-rs/testing").unwrap();
-    //     api.listen_for_chat_messages(&room_id, rx, |m| {
-    //         println!("Received: {:?}", m.unwrap());
-    //     });
-    // });
-
-    println!("Wait for 3 seconds...");
-    thread::sleep(Duration::from_millis(3000));
-
-    println!("Sending a stop signal...");
-    tx.send(false).unwrap();
+    api.start_faye_listener(handler, &subscriptions).unwrap();
 }

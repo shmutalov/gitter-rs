@@ -19,7 +19,8 @@ use url::Url;
 
 #[derive(Debug)]
 pub enum FayeError {
-    ConnectionError,
+    ConnectionError(String),
+    WebsocketError(tungstenite::Error),
     CloseError,
     WriteError,
     ReadError,
@@ -67,7 +68,7 @@ where
 
         self.state.connecting = true;
 
-        let (_socket, _) = tungstenite::connect(url).map_err(|_| FayeError::ConnectionError)?;
+        let (_socket, _) = tungstenite::connect(url).map_err(|e| FayeError::WebsocketError(e))?;
 
         self.state.connecting = false;
         self.state.connected = true;
@@ -89,7 +90,9 @@ where
     /// Subscribe to channels
     pub fn subscribe(&mut self, subscriptions: &Vec<String>) -> FayeResult<()> {
         if !self.is_connected() {
-            return Err(FayeError::ConnectionError);
+            return Err(FayeError::ConnectionError(
+                "Cannot subscribe, because connection was not established".into(),
+            ));
         }
 
         self.bayeux_subscribe(subscriptions)
@@ -98,7 +101,9 @@ where
     /// Unsubscribe from channels
     pub fn unsubscribe(&mut self, subscriptions: &Vec<String>) -> FayeResult<()> {
         if !self.is_connected() {
-            return Err(FayeError::ConnectionError);
+            return Err(FayeError::ConnectionError(
+                "Cannot unsubscribe, because connection was not established".into(),
+            ));
         }
 
         self.bayeux_unsubscribe(subscriptions)
@@ -232,7 +237,9 @@ where
             return Ok(m);
         }
 
-        Err(FayeError::ConnectionError)
+        Err(FayeError::ConnectionError(
+            "Cannot send a message, because connection was not established".into(),
+        ))
     }
 }
 

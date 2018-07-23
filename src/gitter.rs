@@ -19,7 +19,7 @@ pub struct Gitter<'a> {
 }
 
 const REST_API_BASE_URL: &str = "https://api.gitter.im/v1";
-const FAYE_API_BASE_URL: &str = "https://api.gitter.im/api/v1";
+const FAYE_API_BASE_URL: &str = "wss://api.gitter.im";
 const DEFAULT_TIMEOUT_SECS: u64 = 40;
 
 #[derive(Debug)]
