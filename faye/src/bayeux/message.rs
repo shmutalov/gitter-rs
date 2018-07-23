@@ -1,6 +1,17 @@
 use chrono::{DateTime, Utc};
+use serde_json;
 use serde_json::Value;
 use std::collections::HashMap;
+
+#[derive(Debug)]
+pub enum MessageType {
+    Handshake,
+    Connect,
+    Disconnect,
+    Subscribe,
+    Unsubscribe,
+    Other,
+}
 
 /// Type of transport the client requires for communication.
 #[derive(Serialize, Deserialize, Debug)]
@@ -229,4 +240,70 @@ pub struct Message {
     /// between server and client implementations.
     #[serde(rename = "ext")]
     pub extensions: Option<HashMap<String, Value>>,
+}
+
+impl Message {
+    /// Serializes message to JSON-string
+    pub fn to_json(&self) -> String {
+        serde_json::to_string(self).unwrap()
+    }
+
+    /// Returns true, if message is META (HANDSHAKE, CONNECT, DISCONNECT, SUBSCRIBE, UNSUBSCRIBE)
+    pub fn is_meta(&self) -> bool {
+        self.channel.starts_with("/meta/")
+    }
+
+    /// Checks the message type and returns true, if message is HANDSHAKE
+    pub fn is_handshake(&self) -> bool {
+        self.channel == "/meta/handshake"
+    }
+
+    /// Checks the message type and returns true, if message is CONNECT
+    pub fn is_connect(&self) -> bool {
+        self.channel == "/meta/connect"
+    }
+
+    /// Checks the message type and returns true, if message is DISCONNECT
+    pub fn is_disconnect(&self) -> bool {
+        self.channel == "/meta/disconnect"
+    }
+
+    /// Checks the message type and returns true, if message is SUBSCRIBE
+    pub fn is_subscribe(&self) -> bool {
+        self.channel == "/meta/subscribe"
+    }
+
+    /// Checks the message type and returns true, if message is UNSUBSCRIBE
+    pub fn is_unsubscribe(&self) -> bool {
+        self.channel == "/meta/unsubscribe"
+    }
+
+    /// Get message type
+    pub fn get_type(&self) -> MessageType {
+        if self.is_handshake() {
+            MessageType::Handshake
+        } else if self.is_connect() {
+            MessageType::Connect
+        } else if self.is_disconnect() {
+            MessageType::Disconnect
+        } else if self.is_subscribe() {
+            MessageType::Subscribe
+        } else if self.is_unsubscribe() {
+            MessageType::Unsubscribe
+        } else {
+            MessageType::Other
+        }
+    }
+
+    /// Return message error text
+    pub fn get_error(&self) -> String {
+        if self.successful.is_some() && self.successful.unwrap() {
+            return "".into();
+        }
+
+        self.error
+            .as_ref()
+            .unwrap_or(&"Unknown error".into())
+            .clone()
+    }
 }

@@ -1,4 +1,5 @@
-use faye::FayeClient;
+use faye::{FayeClient, FayeError, MessageHandler};
+use models::*;
 use reqwest::header::{Accept, Authorization, Bearer, ContentType, Headers};
 use reqwest::{Client, IntoUrl};
 use serde::{Deserialize, Serialize};
@@ -7,8 +8,7 @@ use std::borrow::Cow;
 use std::collections::HashMap;
 use std::sync::mpsc;
 use std::time::Duration;
-
-use models::*;
+use url::Url;
 
 #[derive(Debug)]
 pub struct Gitter<'a> {
@@ -30,6 +30,13 @@ pub enum ApiError {
     RoomNotFound,
     UserNotFound,
     Unknown(String),
+    FayeError(FayeError),
+}
+
+impl From<FayeError> for ApiError {
+    fn from(error: FayeError) -> Self {
+        ApiError::FayeError(error)
+    }
 }
 
 type ApiResult<T> = Result<T, ApiError>;
@@ -485,10 +492,33 @@ impl<'a> Gitter<'a> {
         // faye.connect(full_url);
 
         // stop on signal
-        while rx.try_recv().unwrap_or(true) {
-            let msg = self.get_message(room_id, "keklol");
-            handler(msg);
-        }
+        // while rx.try_recv().unwrap_or(true) {
+        //     let msg = self.get_message(room_id, "keklol");
+        //     handler(msg);
+        // }
+    }
+
+    pub fn start_faye_listener<H>(
+        &mut self,
+        handler: H,
+        subscriptions: &Vec<String>,
+    ) -> ApiResult<()>
+    where
+        H: MessageHandler,
+    {
+        let mut extensions = HashMap::new();
+        extensions.insert("token".into(), self.token.clone().into());
+
+        let mut faye = FayeClient::new(handler, Some(extensions));
+        faye.connect(Url::parse(&self.faye_api_base_url).unwrap())?;
+
+        faye.subscribe(subscriptions)?;
+
+        faye.unsubscribe(subscriptions)?;
+
+        faye.disconnect()?;
+
+        Ok(())
     }
 }
 
